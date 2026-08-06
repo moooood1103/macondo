@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>百年孤独 · 阅读报告</title>
+<meta name="description" content="《百年孤独》阅读报告：马孔多的一百年，人类孤独的一百年。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- 背景蝴蝶画布：整页若有若无的金色蝶影 -->
+<canvas id="butterflies" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-header" id="siteHeader">
+  <a class="wordmark" href="#top">百年孤独<span class="wordmark-sub">· 阅读报告</span></a>
+  <nav class="site-nav" aria-label="章节导航">
+    <a href="#intro">引言</a>
+    <a href="#story">故事</a>
+    <a href="#people">人物</a>
+    <a href="#themes">主题</a>
+    <a href="#craft">写法</a>
+    <a href="#meaning">意义</a>
+    <a href="#closing">结语</a>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+</header>
+
+<main id="top">
+
+  <!-- ============ 封面 ============ -->
+  <section class="hero" aria-label="封面">
+    <p class="hero-kicker" data-hero="1">阅读报告 · READING REPORT</p>
+    <h1 class="hero-title" data-hero="2"><span>百年孤独</span></h1>
+    <p class="hero-sub" data-hero="3">马孔多的一百年，人类孤独的一百年</p>
+    <div class="hero-rule" data-hero="4"></div>
+    <p class="hero-meta" data-hero="5">
+      加西亚·马尔克斯（哥伦比亚）<span class="dot">·</span>1967 年初版<span class="dot">·</span>魔幻现实主义代表作<span class="dot">·</span>1982 年诺贝尔文学奖
+    </p>
+    <p class="hero-producer" data-hero="6">制作人：莫迪</p>
+    <div class="scroll-cue" aria-hidden="true"><span>向下阅读</span><i></i></div>
+  </section>
+
+  <!-- ============ 引言 ============ -->
+  <section class="section" id="intro">
+    <div class="section-head" data-reveal>
+      <p class="kicker">引言 · 从「读进去」开始</p>
+      <h2 class="title">一部值得用一生<br>反复阅读的书</h2>
+    </div>
+    <div class="prose" data-reveal>
+      <p>1967 年问世时，它让整个世界重新认识拉丁美洲文学。半个多世纪过去，它依然是理解「孤独」、理解「历史」、理解「人」的绝佳入口。</p>
+      <p>马尔克斯生长在哥伦比亚的阿拉卡塔卡，那是马孔多的原型。外祖父的战争故事、祖母的鬼魂传说、香蕉公司的大屠杀，都成了这部小说的血肉。他写《百年孤独》，是为了「给童年时期以另一种方式触动我的所有经历一个完整的归宿」。</p>
+    </div>
+    <div class="path" data-reveal>
+      <p class="path-label">本报告的阅读路径，由表及里，层层递进</p>
+      <ol class="path-steps">
+        <li><span class="n">01</span>进入故事</li>
+        <li><span class="n">02</span>看见人物</li>
+        <li><span class="n">03</span>追问主题</li>
+        <li><span class="n">04</span>品味写法</li>
+        <li><span class="n">05</span>思索意义</li>
+        <li><span class="n">06</span>返回自身</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ 第一层 · 故事 ============ -->
+  <section class="section section-tinted" id="story">
+    <div class="section-head" data-reveal>
+      <p class="kicker">第一层 · 进入故事</p>
+      <h2 class="title">马孔多的四幕<br>创世 · 扩张 · 幻灭 · 毁灭</h2>
+      <p class="lead">布恩迪亚家族与马孔多的故事，可以概括为圣经式的四幕：一个家族、一座城镇的一百年，完成一次完整的兴衰循环。</p>
+    </div>
+    <ol class="acts">
+      <li class="act" data-reveal>
+        <span class="act-no">01</span>
+        <h3>创世</h3>
+        <p>一次出走，一座新镇。何塞·阿尔卡蒂奥·布恩迪亚与表妹乌尔苏拉因近亲婚配的恐惧，带领二十来户人家翻山越岭，在河边建起马孔多。这里起初像一块巨大的透明石头，近乎世外桃源。吉卜赛人的磁铁与望远镜年年来此，梅尔基亚德斯的羊皮卷，像一道悬在家族头顶的预言。</p>
+      </li>
+      <li class="act" data-reveal>
+        <span class="act-no">02</span>
+        <h3>扩张</h3>
+        <p>战争与「文明」同时降临。奥雷里亚诺上校一生发动并参与三十二场武装起义，十七个私生子额前都带着灰烬的十字。火车、电灯、电影、留声机与香蕉公司闯入马孔多，外国资本带来表面的繁荣，也埋下毁灭的种子。</p>
+      </li>
+      <li class="act" data-reveal>
+        <span class="act-no">03</span>
+        <h3>鼎盛与幻灭</h3>
+        <p>香蕉公司雇佣数千工人，马孔多灯红酒绿。罢工被武装镇压，三千多人倒在机枪下，尸体被装进火车运往大海；官方宣称「没有发生任何事」。随后，四年十一个月零两天的大雨倾盆而下，冲垮繁华，也冲垮家族最后的元气。</p>
+      </li>
+      <li class="act" data-reveal>
+        <span class="act-no">04</span>
+        <h3>毁灭</h3>
+        <p>雨后的马孔多逐渐被遗忘，乱伦、挥霍、孤独代代延续。奥雷里亚诺·巴比洛尼亚在羊皮卷中破译出整个家族的命运，读到「家族的第一个人被捆在一棵树上，最后一个人正被蚂蚁吃掉」。就在他读完最后一页时，飓风卷走了马孔多，注定经受百年孤独的家族，不会有第二次机会在大地上出现。</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ 第二层 · 人物 ============ -->
+  <section class="section" id="people">
+    <div class="section-head" data-reveal>
+      <p class="kicker">第二层 · 看见人物</p>
+      <h2 class="title">每一种孤独<br>都是一张面孔</h2>
+      <p class="lead">布恩迪亚家族几乎没有一个人不孤独，但每个人的孤独都不一样。</p>
+    </div>
+    <ul class="faces">
+      <li class="face" data-reveal>
+        <p class="role">求索者</p>
+        <h3>何塞·阿尔卡蒂奥·布恩迪亚</h3>
+        <p>沉迷炼金与天文，走得太远，无人能跟上；最终被绑在院中的栗树下，淋着雨说话，直到死去。</p>
+      </li>
+      <li class="face" data-reveal>
+        <p class="role">守望者</p>
+        <h3>乌尔苏拉</h3>
+        <p>家族的脊梁，活过上百岁，看得最清，也最无力；眼睁睁看着一切重复发生，却无能为力。</p>
+      </li>
+      <li class="face" data-reveal>
+        <p class="role">权力者</p>
+        <h3>奥雷里亚诺上校</h3>
+        <p>打了三十二场战争，到头来发现「自己是为了虚荣而战」；晚年把自己关进作坊，做十七个小金鱼，熔化重做。</p>
+      </li>
+      <li class="face" data-reveal>
+        <p class="role">纯真者</p>
+        <h3>美人儿蕾梅黛丝</h3>
+        <p>美得惊心动魄，却对世俗规则浑然不觉，最终裹着床单升天而去；凡尘配不上她，她也无法理解凡尘。</p>
+      </li>
+      <li class="face" data-reveal>
+        <p class="role">爱的孤独</p>
+        <h3>阿玛兰塔</h3>
+        <p>一生在爱与拒绝之间徘徊，晚年为自己织寿衣，白天织，晚上拆；不敢爱，也不会爱。</p>
+      </li>
+      <li class="face" data-reveal>
+        <p class="role">知识者</p>
+        <h3>奥雷里亚诺·巴比洛尼亚</h3>
+        <p>家族最后的血脉，独自在羊皮卷中求索；当他发现自己一直活在早已写好的剧本里，孤独便成了彻底的绝望。</p>
+      </li>
+    </ul>
+    <p class="section-close" data-reveal>孤独不是一种性格，而是一种命运：弥漫在家族血脉里的，是「爱的能力的缺席」。</p>
+  </section>
+
+  <!-- ============ 第三层 · 主题 ============ -->
+  <section class="section section-tinted" id="themes">
+    <div class="section-head" data-reveal>
+      <p class="kicker">第三层 · 追问主题</p>
+      <h2 class="title">孤独从何而来<br>又为何循环</h2>
+    </div>
+    <ol class="themes">
+      <li data-reveal>
+        <span class="n">01</span>
+        <h3>循环的时间</h3>
+        <p>一代代沿用同样的名字，性格与命运随之重复；羊皮卷最终揭示，历史是循环的，一切早有预言。困境的根源，在于不断重复历史，却始终记不住教训。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">02</span>
+        <h3>记忆与遗忘</h3>
+        <p>失眠症瘟疫让全镇人失去记忆，人们不得不在物品上贴标签：「这是牛，每天要挤奶……」一个忘记历史的民族，注定重蹈覆辙。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">03</span>
+        <h3>权力与战争</h3>
+        <p>上校的战争没有意义，保守派与自由派的口号没有区别，普通百姓被裹挟其中。战争改变不了什么，只会制造更多的孤独与死亡。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">04</span>
+        <h3>爱情与乱伦</h3>
+        <p>布恩迪亚家族最深刻的缺陷，是「爱的能力」的缺席。近亲结合、禁忌之恋贯穿七代，最终应验了猪尾巴的诅咒；家族的灭亡，是爱的失败。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">05</span>
+        <h3>进步与掠夺</h3>
+        <p>火车、电灯、香蕉公司，现代性以「文明」之名进入马孔多，实则是资本的掠夺；大屠杀被官方抹杀，马尔克斯以文学为被抹去的历史作证。</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ 第四层 · 写法 ============ -->
+  <section class="section" id="craft">
+    <div class="section-head" data-reveal>
+      <p class="kicker">第四层 · 品味写法</p>
+      <h2 class="title">魔幻现实主义<br>如何抵达真实</h2>
+      <p class="lead">从「写了什么」进到「怎么写」，欣赏艺术本身。</p>
+    </div>
+    <ul class="crafts">
+      <li data-reveal>
+        <span class="n">01</span>
+        <h3>魔幻与现实的缝合</h3>
+        <p>飞毯、黄蝴蝶、升天的美人、四年的雨，与罢工、屠杀、火车并置，魔幻与日常无缝衔接。用看似荒诞的细节，写出比现实更深的真实。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">02</span>
+        <h3>时间的艺术</h3>
+        <p>「多年以后，面对行刑队，奥雷里亚诺·布恩迪亚上校将会回想起父亲带他去见识冰块的那个遥远的下午」——把未来、现在、过去叠在一起，营造出「一切早已发生」的宿命感。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">03</span>
+        <h3>神话原型与象征</h3>
+        <p>全书以创世、洪水、启示录为框架；冰块象征新知，小金鱼象征徒劳的循环，黄蝴蝶象征禁忌的爱情，蚂蚁象征家族的终结，羊皮卷象征写在纸上的宿命。象征系统严密而自洽。</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============ 第五层 · 意义 ============ -->
+  <section class="section section-tinted" id="meaning">
+    <div class="section-head" data-reveal>
+      <p class="kicker">第五层 · 思索意义</p>
+      <h2 class="title">一个大陆的寓言<br>所有人的处境</h2>
+      <p class="lead">从「怎么写」进到「为什么写」，把作品放回历史与人类的坐标系。</p>
+    </div>
+    <ul class="meanings">
+      <li data-reveal>
+        <span class="n">01</span>
+        <h3>马孔多即拉丁美洲</h3>
+        <p>殖民、独立、内战、外国资本入侵、大屠杀、遗忘。马孔多的毁灭，是拉美被反复掠夺、被遗忘、被抹去的历史的寓言。诺贝尔奖授奖辞称他「反映出一个大陆的生命与矛盾」。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">02</span>
+        <h3>孤独的普遍性</h3>
+        <p>如果《百年孤独》只是拉美寓言，它不会让全世界的读者着迷。沟通的失败、记忆的丧失、意义的虚空、循环的困境——每个人都有自己的「马孔多」，都会在某个时刻感受到「百年孤独」。</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============ 第六层 · 返回自身 ============ -->
+  <section class="section" id="self">
+    <div class="section-head" data-reveal>
+      <p class="kicker">第六层 · 返回自身</p>
+      <h2 class="title">阅读之后的<br>几点思考</h2>
+      <p class="lead">最后一层，从书里走出来，谈谈自己的阅读感受。</p>
+    </div>
+    <ol class="thoughts">
+      <li data-reveal>
+        <span class="n">01</span>
+        <h3>我们能否跳出自己的「马孔多」</h3>
+        <p>历史不会自动前进，循环不会自动打破。能否跳出来，取决于我们是否记得、是否反思、是否敢于改变。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">02</span>
+        <h3>记忆是身份的根</h3>
+        <p>失眠症瘟疫让我想到：一个忘记来处的人，会渐渐不知道自己是谁。记住，是孤独的反面；记忆，是抵抗遗忘与重复的武器。</p>
+      </li>
+      <li data-reveal>
+        <span class="n">03</span>
+        <h3>爱的能力，是孤独的解药</h3>
+        <p>家族不缺少爱的事件，唯独缺少去理解、去接纳、去承担的能力。唯有真正学会去爱，孤独的循环才可能被打破。</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ 结语 ============ -->
+  <section class="closing" id="closing">
+    <p class="kicker" data-reveal>结语</p>
+    <blockquote class="closing-quote" data-reveal>
+      孤独是人类的宿命，<br>但记住它、理解它、用爱去面对它，<br>是我们唯一能做的反抗。
+    </blockquote>
+    <p class="closing-sub" data-reveal>所谓「百年孤独」，也许不是一百年，而是漫长到需要用一生去理解的孤独。</p>
+  </section>
+
+  <!-- ============ 附录 · 句子 ============ -->
+  <section class="section quotes" id="quotes">
+    <div class="section-head" data-reveal>
+      <p class="kicker">附录 · 值得回味的句子</p>
+      <h2 class="title">马孔多的回声</h2>
+    </div>
+    <ol class="quote-list">
+      <li data-reveal><span class="n">01</span><p>多年以后，面对行刑队，奥雷里亚诺·布恩迪亚上校将会回想起父亲带他去见识冰块的那个遥远的下午。</p></li>
+      <li data-reveal><span class="n">02</span><p>过去都是假的，回忆是一条没有归途的路，以往的一切春天都无法复原。</p></li>
+      <li data-reveal><span class="n">03</span><p>生命中曾经有过的所有灿烂，原来终究，都需要用寂寞来偿还。</p></li>
+      <li data-reveal><span class="n">04</span><p>一个人不是在该死的时候死，而是在能死的时候死。</p></li>
+      <li data-reveal><span class="n">05</span><p>因为注定经受百年孤独的家族不会有第二次机会在大地上出现。</p></li>
+    </ol>
+    <p class="quote-note" data-reveal>以上引文为常见中译本的流行译法，个别词句以具体版本为准。</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>《百年孤独》阅读报告</p>
+  <p class="footer-sub">马孔多的一百年，人类孤独的一百年 · 2026 年 8 月</p>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
