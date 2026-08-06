@@ -515,7 +515,7 @@ main { position: relative; z-index: 2; }
 .site-footer .footer-sub { margin-top: 10px; font-family: var(--sans); font-size: 12px; letter-spacing: 0.16em; color: var(--ink-faint); }
 
 /* ---------- 入场与滚动揭示 ---------- */
-[data-hero] {
+html.anim [data-hero] {
   opacity: 0;
   transform: translateY(22px);
   transition: opacity 1.1s var(--ease), transform 1.1s var(--ease);
@@ -530,7 +530,7 @@ body.loaded [data-hero="6"] { transition-delay: 0.95s; }
 
 body.loaded [data-hero] { opacity: 1; transform: none; }
 
-[data-reveal] {
+html.anim [data-reveal] {
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 1s var(--ease), transform 1s var(--ease);
