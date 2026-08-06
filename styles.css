@@ -528,7 +528,7 @@ body.loaded [data-hero="4"] { transition-delay: 0.62s; }
 body.loaded [data-hero="5"] { transition-delay: 0.8s; }
 body.loaded [data-hero="6"] { transition-delay: 0.95s; }
 
-body.loaded [data-hero] { opacity: 1; transform: none; }
+html.anim body.loaded [data-hero] { opacity: 1; transform: none; }
 
 html.anim [data-reveal] {
   opacity: 0;
@@ -538,7 +538,7 @@ html.anim [data-reveal] {
   will-change: opacity, transform;
 }
 
-[data-reveal].in { opacity: 1; transform: none; }
+html.anim [data-reveal].in { opacity: 1; transform: none; }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 900px) {
