@@ -2,281 +2,259 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>百年孤独 · 阅读报告</title>
-<meta name="description" content="《百年孤独》阅读报告：马孔多的一百年，人类孤独的一百年。">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>《复活》阅读分享</title>
+<meta name="description" content="《复活》课堂阅读分享：四个细节里的精神重生">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- 背景蝴蝶画布：整页若有若无的金色蝶影 -->
-<canvas id="butterflies" aria-hidden="true"></canvas>
-<div class="vignette" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
+<div class="scroll-space" id="scrollSpace"></div>
 
-<header class="site-header" id="siteHeader">
-  <a class="wordmark" href="#top">百年孤独<span class="wordmark-sub">· 阅读报告</span></a>
-  <nav class="site-nav" aria-label="章节导航">
-    <a href="#intro">引言</a>
-    <a href="#story">故事</a>
-    <a href="#people">人物</a>
-    <a href="#themes">主题</a>
-    <a href="#craft">写法</a>
-    <a href="#meaning">意义</a>
-    <a href="#closing">结语</a>
-  </nav>
-  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
-</header>
-
-<main id="top">
-
-  <!-- ============ 封面 ============ -->
-  <section class="hero" aria-label="封面">
-    <p class="hero-kicker" data-hero="1">阅读报告 · READING REPORT</p>
-    <h1 class="hero-title" data-hero="2"><span>百年孤独</span></h1>
-    <p class="hero-sub" data-hero="3">马孔多的一百年，人类孤独的一百年</p>
-    <div class="hero-rule" data-hero="4"></div>
-    <p class="hero-meta" data-hero="5">
-      加西亚·马尔克斯（哥伦比亚）<span class="dot">·</span>1967 年初版<span class="dot">·</span>魔幻现实主义代表作<span class="dot">·</span>1982 年诺贝尔文学奖
-    </p>
-    <p class="hero-producer" data-hero="6">制作人：莫迪</p>
-    <div class="scroll-cue" aria-hidden="true"><span>向下阅读</span><i></i></div>
-  </section>
-
-  <!-- ============ 引言 ============ -->
-  <section class="section" id="intro">
-    <div class="section-head" data-reveal>
-      <p class="kicker">引言 · 从「读进去」开始</p>
-      <h2 class="title">一部值得用一生<br>反复阅读的书</h2>
+<div class="stage">
+  <div class="frame" id="frame">
+    <div class="ambient">
+      <div class="wash wash-dawn"></div>
+      <div class="wash wash-ink"></div>
+      <div class="wash wash-night"></div>
+      <div class="grain"></div>
     </div>
-    <div class="prose" data-reveal>
-      <p>1967 年问世时，它让整个世界重新认识拉丁美洲文学。半个多世纪过去，它依然是理解「孤独」、理解「历史」、理解「人」的绝佳入口。</p>
-      <p>马尔克斯生长在哥伦比亚的阿拉卡塔卡，那是马孔多的原型。外祖父的战争故事、祖母的鬼魂传说、香蕉公司的大屠杀，都成了这部小说的血肉。他写《百年孤独》，是为了「给童年时期以另一种方式触动我的所有经历一个完整的归宿」。</p>
-    </div>
-    <div class="path" data-reveal>
-      <p class="path-label">本报告的阅读路径，由表及里，层层递进</p>
-      <ol class="path-steps">
-        <li><span class="n">01</span>进入故事</li>
-        <li><span class="n">02</span>看见人物</li>
-        <li><span class="n">03</span>追问主题</li>
-        <li><span class="n">04</span>品味写法</li>
-        <li><span class="n">05</span>思索意义</li>
-        <li><span class="n">06</span>返回自身</li>
+
+    <svg class="art" id="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <defs>
+        <filter id="blurBig" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="52"/>
+        </filter>
+        <filter id="blurMid" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="22"/>
+        </filter>
+        <clipPath id="clipThanks"><rect id="clipThanksRect" x="410" y="318" width="0" height="150"/></clipPath>
+        <clipPath id="clipNames"><rect id="clipNamesRect" x="600" y="466" width="0" height="110"/></clipPath>
+      </defs>
+
+      <!-- 墨水晕染 -->
+      <g id="bloom" filter="url(#blurBig)">
+        <ellipse cx="420" cy="470" rx="210" ry="150"></ellipse>
+        <ellipse cx="900" cy="380" rx="250" ry="170"></ellipse>
+        <ellipse cx="1180" cy="620" rx="220" ry="150"></ellipse>
+        <ellipse cx="700" cy="720" rx="200" ry="120"></ellipse>
+      </g>
+
+      <!-- 破碎笔画（由脚本生成） -->
+      <g id="shards"></g>
+
+      <!-- 侧面肖像：仅几条线 -->
+      <g id="portrait">
+        <path d="M 700 250 C 752 206 812 220 830 282 C 841 322 834 342 852 370 C 866 394 846 404 838 416 C 850 426 850 440 840 452 C 845 470 838 488 826 502 C 810 520 788 532 766 536"></path>
+        <path d="M 700 250 C 656 302 652 382 676 442 C 688 472 704 494 724 510"></path>
+        <path d="M 766 536 C 758 566 748 588 734 606"></path>
+        <path d="M 646 648 C 704 606 762 592 824 600"></path>
+        <path d="M 784 320 C 796 312 812 312 826 320"></path>
+      </g>
+
+      <!-- 钢笔 + 墨线 -->
+      <g id="pen">
+        <path d="M 826 118 L 862 152 L 848 296 L 834 296 L 820 152 Z"></path>
+        <path d="M 834 296 L 848 296 L 841 326 Z"></path>
+      </g>
+      <line id="inkLine" x1="841" y1="326" x2="841" y2="790"></line>
+
+      <!-- 铅笔 -->
+      <g id="pencil">
+        <path d="M 679 579 L 929 329"></path>
+        <path d="M 721 621 L 971 371"></path>
+        <path d="M 679 579 L 721 621"></path>
+        <path d="M 929 329 L 971 371"></path>
+        <path d="M 929 329 L 984 316 L 971 371"></path>
+      </g>
+
+      <!-- 鸽子 -->
+      <g id="doves">
+        <path class="dove" d="M 0 0 C 26 -26 54 -26 78 -2 C 102 -26 130 -26 156 0"></path>
+        <path class="dove" d="M 0 0 C 20 -20 42 -20 60 -2 C 78 -20 100 -20 120 0"></path>
+        <path class="dove" d="M 0 0 C 22 -22 46 -22 66 -2 C 86 -22 110 -22 132 0"></path>
+        <path class="dove" d="M 0 0 C 16 -16 34 -16 48 -2 C 62 -16 80 -16 96 0"></path>
+        <path class="dove" d="M 0 0 C 18 -18 38 -18 54 -2 C 70 -18 90 -18 108 0"></path>
+      </g>
+
+      <!-- 两条线 -->
+      <g id="lines">
+        <path id="lineA" d="M 160 470 C 520 300 1080 300 1440 470"></path>
+        <path id="lineB" d="M 160 500 C 520 690 1080 690 1440 500"></path>
+      </g>
+
+      <!-- 最终：散落笔画聚拢，显出致谢与讲解人 -->
+      <g id="finalShards"></g>
+      <g id="finalGroup">
+        <text id="finalThanks" clip-path="url(#clipThanks)" x="800" y="430" text-anchor="middle">谢谢　欢迎交流</text>
+        <text id="finalNames" clip-path="url(#clipNames)" x="800" y="540" text-anchor="middle">莫迪　娄涵予</text>
+      </g>
+    </svg>
+
+    <!-- ============ 00 封面 ============ -->
+    <section class="scene scene-cover theme-dark" data-act="0">
+      <p class="kicker fade" data-d="0">托尔斯泰 · 长篇小说</p>
+      <h1 class="display fade" data-d="1">《复活》</h1>
+      <p class="subtitle fade" data-d="2">四个细节里的精神重生</p>
+      <span class="rule fade" data-d="3"></span>
+      <p class="presenter fade" data-d="4">讲解人：莫迪，娄涵予</p>
+      <p class="occasion fade" data-d="5">课堂阅读分享</p>
+    </section>
+
+    <!-- ============ 02 为什么从细节读 ============ -->
+    <section class="scene scene-why theme-light" data-act="2">
+      <h2 class="h1 fade" data-d="0">为什么从四个细节读《复活》</h2>
+      <p class="lead fade" data-d="1">一部厚厚的小说，可以从四个小动作进入。</p>
+      <ul class="points">
+        <li class="fade" data-d="2">《复活》写的是聂赫留朵夫的赎罪，也是玛丝洛娃的重生。</li>
+        <li class="fade" data-d="3">托尔斯泰不写呐喊，把人物最深的转变藏进很小的动作里。</li>
+        <li class="fade" data-d="4">四个细节，正好标出两个人“活过来”的关键节点。</li>
+      </ul>
+      <p class="foot fade" data-d="5">今天，就顺着这四个细节，由浅入深地读一遍《复活》。</p>
+    </section>
+
+    <!-- ============ 03 主线 ============ -->
+    <section class="scene scene-line theme-light" data-act="3">
+      <h2 class="h1 fade" data-d="0">一条主线：从法庭到西伯利亚</h2>
+      <p class="lead fade" data-d="1">一次重逢，把两个人的命运重新绑在一起。</p>
+      <div class="steps">
+        <div class="step fade" data-d="2"><b>法庭重逢</b><span>陪审席上，他认出被告席上的她</span></div>
+        <div class="step fade" data-d="3"><b>奔走赎罪</b><span>上诉、探监，第一次直面她的苦难</span></div>
+        <div class="step fade" data-d="4"><b>流放同行</b><span>他随她前往西伯利亚，各自重生</span></div>
+      </div>
+      <p class="foot fade" data-d="5">聂赫留朵夫：贵族青年，赎罪者　｜　玛丝洛娃：被告席上的被伤害者</p>
+    </section>
+
+    <!-- ============ 04 四个细节（墨水分区） ============ -->
+    <section class="scene scene-four theme-light" data-act="4">
+      <h2 class="h1 fade" data-d="0">四个细节，四步深入</h2>
+      <p class="lead fade" data-d="1">每个细节都从“看见了什么”，走向“说明了什么”。</p>
+      <div class="grid4">
+        <article class="inkcell fade" data-d="2">
+          <h3>法庭上掉落的铅笔</h3><p class="who">聂赫留朵夫</p>
+          <p>铅笔滑落 → 良知第一次被击中</p>
+        </article>
+        <article class="inkcell fade" data-d="3">
+          <h3>“您”与“你”的切换</h3><p class="who">聂赫留朵夫</p>
+          <p>称呼摇摆 → 阶级与忏悔的拉扯</p>
+        </article>
+        <article class="inkcell fade" data-d="4">
+          <h3>玛丝洛娃伸手抓钞票</h3><p class="who">玛丝洛娃</p>
+          <p>抓过钞票 → 苦难教会她只信金钱</p>
+        </article>
+        <article class="inkcell fade" data-d="5">
+          <h3>鸽子</h3><p class="who">玛丝洛娃</p>
+          <p>惊飞的白鸽 → 人性火种尚未熄灭</p>
+        </article>
+      </div>
+      <p class="foot fade" data-d="6">前两个细节属于他，后两个细节属于她。</p>
+    </section>
+
+    <!-- ============ 05 细节一 ============ -->
+    <section class="scene scene-detail theme-light" data-act="5">
+      <p class="kicker fade" data-d="0">细节一 · 聂赫留朵夫</p>
+      <h2 class="h1 fade" data-d="1">法庭上掉落的铅笔</h2>
+      <p class="quote fade" data-d="2"><i>原文回放</i>他猛然认出被告席上的她，手里的铅笔滑落，墨水在记录本上晕开。</p>
+      <ul class="points">
+        <li class="fade" data-d="3"><b>一支铅笔，胜过大段独白。</b>灵魂的震动不是喊出来的，是漏出来的。</li>
+        <li class="fade" data-d="4"><b>墨迹像良心渗出的血。</b>他以为在审判别人，却看见了自己的罪。</li>
+        <li class="fade" data-d="5"><b>陪审席与被告席，是写好的位置。</b>重逢背后，是社会早安排下的距离。</li>
+      </ul>
+      <p class="take fade" data-d="6">复活，从“看见”开始。</p>
+    </section>
+
+    <!-- ============ 06 细节二 ============ -->
+    <section class="scene scene-detail theme-light" data-act="6">
+      <p class="kicker fade" data-d="0">细节二 · 聂赫留朵夫</p>
+      <h2 class="h1 fade" data-d="1">“您”与“你”的来回切换</h2>
+      <p class="quote fade" data-d="2"><i>原文回放</i>隔着铁栏，他一会儿客气地称“您”，一会儿又脱口而出“你”，冷静后仍是“您”。</p>
+      <ul class="points">
+        <li class="fade" data-d="3"><b>“您”是礼貌，也是一堵墙。</b>它把他稳稳按在贵族的位置上。</li>
+        <li class="fade" data-d="4"><b>“你”是放下身份，也是想穿越过去的忏悔。</b>退回那个亲密的夏天，直面亏欠。</li>
+        <li class="fade" data-d="5"><b>来回切换，才是真实的人。</b>这是托尔斯泰“心灵辩证法”的标本。</li>
+      </ul>
+      <p class="take fade" data-d="6">更深一层：无论“您”还是“你”，主语都是“我”。</p>
+    </section>
+
+    <!-- ============ 07 细节三 ============ -->
+    <section class="scene scene-detail theme-light" data-act="7">
+      <p class="kicker fade" data-d="0">细节三 · 玛丝洛娃</p>
+      <h2 class="h1 fade" data-d="1">玛丝洛娃伸手抓钞票</h2>
+      <p class="quote fade" data-d="2"><i>原文回放</i>她不去听他的忏悔，眼睛只盯着钱，趁狱警转头，一把抓过钞票。</p>
+      <ul class="points">
+        <li class="fade" data-d="3"><b>一只手，推翻了他准备好的救赎。</b>他准备的是灵魂戏，她要的是活下去。</li>
+        <li class="fade" data-d="4"><b>抓钞票不是贪婪，是创伤后的生存本能。</b>媚笑，是她在深渊里学会的面具。</li>
+        <li class="fade" data-d="5"><b>这个细节拷问的不是她，而是他。</b>真正需要“复活”的，或许是陪审席上的那个。</li>
+      </ul>
+      <p class="take fade" data-d="6">救赎很难，也从此开始变真。</p>
+    </section>
+
+    <!-- ============ 08 细节四 ============ -->
+    <section class="scene scene-detail theme-light" data-act="8">
+      <p class="kicker fade" data-d="0">细节四 · 玛丝洛娃</p>
+      <h2 class="h1 fade" data-d="1">鸽子</h2>
+      <p class="quote fade" data-d="2"><i>原文回放</i>一只鸽子从她耳边惊飞，她下意识微微一笑，随即重重叹了口气。</p>
+      <ul class="points">
+        <li class="fade" data-d="3"><b>鸽子是自由，也是她没被夺走的那部分自己。</b>自由从身边掠过，她还能感觉到。</li>
+        <li class="fade" data-d="4"><b>笑与叹息之间，只有一秒钟。</b>被苦难封存的人性，悄悄呼吸了一次。</li>
+        <li class="fade" data-d="5"><b>面具是真的，面具下的火种也是真的。</b>这一点火种，是她日后复活的根。</li>
+      </ul>
+      <p class="take fade" data-d="6">没有这只鸽子，她的复活就没有根。</p>
+    </section>
+
+    <!-- ============ 09 两条线 ============ -->
+    <section class="scene scene-two theme-light" data-act="9">
+      <h2 class="h1 fade" data-d="0">两条线，一个主题</h2>
+      <p class="lead fade" data-d="1">四个细节，正好拼出两条对称的复活线。</p>
+      <div class="cols">
+        <div class="col fade" data-d="2">
+          <h3>聂赫留朵夫</h3>
+          <p><b>铅笔：</b>苏醒，看见自己的罪。</p>
+          <p><b>称呼：</b>挣扎，阶级与忏悔拉扯。</p>
+        </div>
+        <div class="col fade" data-d="3">
+          <h3>玛丝洛娃</h3>
+          <p><b>钞票：</b>隔绝，只信不会背叛的钱。</p>
+          <p><b>鸽子：</b>火种，人性尚未熄灭。</p>
+        </div>
+      </div>
+      <p class="big fade" data-d="4">复活 ＝ 看见对方，也看见自己</p>
+      <p class="lead small fade" data-d="5">他不是回到从前那个纯洁的自己，她也不是被谁“拯救”成想象的样子。两个被过去毁掉的人，在彼此身上重新学会爱与宽恕——这才是托尔斯泰写的复活。</p>
+    </section>
+
+    <!-- ============ 10 更深一层 ============ -->
+    <section class="scene scene-deep theme-dark" data-act="10">
+      <h2 class="h1 fade" data-d="0">更深一层：感动只是开始</h2>
+      <p class="lead fade" data-d="1">托尔斯泰的诊断很准，但他开的“药方”值得再想一想。</p>
+      <ul class="points">
+        <li class="fade" data-d="2"><b>他痛骂法庭与制度，</b>却把出路交给道德自我完善与福音书。</li>
+        <li class="fade" data-d="3"><b>我们可以不认同这副“药方”，</b>却无法否认他诊断的准确。</li>
+        <li class="fade" data-d="4"><b>真正让他复活的，</b>不是忏悔那一刻的感动，而是之后日复一日的行动。</li>
+      </ul>
+      <p class="take fade" data-d="5">感动只是开始，行动才是复活本身。</p>
+    </section>
+
+    <!-- ============ 11 讨论 ============ -->
+    <section class="scene scene-ask theme-dark" data-act="11">
+      <h2 class="h1 fade" data-d="0">一起聊聊：三个问题</h2>
+      <p class="lead fade" data-d="1">每个问题，都可以回到四个细节里找证据。</p>
+      <ol class="asks">
+        <li class="fade" data-d="2"><b>忏悔会不会只是另一种自我感动？</b><span>他的赎罪，从哪一刻起才真正“落地”？</span></li>
+        <li class="fade" data-d="3"><b>抓钞票的玛丝洛娃，是“堕落”还是“自我保护”？</b><span>把细节三和细节四放在一起，你的判断会变吗？</span></li>
+        <li class="fade" data-d="4"><b>书名叫《复活》，你更相信谁的复活？</b><span>四个细节里，哪一个最打动你？</span></li>
       </ol>
-    </div>
-  </section>
+    </section>
 
-  <!-- ============ 第一层 · 故事 ============ -->
-  <section class="section section-tinted" id="story">
-    <div class="section-head" data-reveal>
-      <p class="kicker">第一层 · 进入故事</p>
-      <h2 class="title">马孔多的四幕<br>创世 · 扩张 · 幻灭 · 毁灭</h2>
-      <p class="lead">布恩迪亚家族与马孔多的故事，可以概括为圣经式的四幕：一个家族、一座城镇的一百年，完成一次完整的兴衰循环。</p>
-    </div>
-    <ol class="acts">
-      <li class="act" data-reveal>
-        <span class="act-no">01</span>
-        <h3>创世</h3>
-        <p>一次出走，一座新镇。何塞·阿尔卡蒂奥·布恩迪亚与表妹乌尔苏拉因近亲婚配的恐惧，带领二十来户人家翻山越岭，在河边建起马孔多。这里起初像一块巨大的透明石头，近乎世外桃源。吉卜赛人的磁铁与望远镜年年来此，梅尔基亚德斯的羊皮卷，像一道悬在家族头顶的预言。</p>
-      </li>
-      <li class="act" data-reveal>
-        <span class="act-no">02</span>
-        <h3>扩张</h3>
-        <p>战争与「文明」同时降临。奥雷里亚诺上校一生发动并参与三十二场武装起义，十七个私生子额前都带着灰烬的十字。火车、电灯、电影、留声机与香蕉公司闯入马孔多，外国资本带来表面的繁荣，也埋下毁灭的种子。</p>
-      </li>
-      <li class="act" data-reveal>
-        <span class="act-no">03</span>
-        <h3>鼎盛与幻灭</h3>
-        <p>香蕉公司雇佣数千工人，马孔多灯红酒绿。罢工被武装镇压，三千多人倒在机枪下，尸体被装进火车运往大海；官方宣称「没有发生任何事」。随后，四年十一个月零两天的大雨倾盆而下，冲垮繁华，也冲垮家族最后的元气。</p>
-      </li>
-      <li class="act" data-reveal>
-        <span class="act-no">04</span>
-        <h3>毁灭</h3>
-        <p>雨后的马孔多逐渐被遗忘，乱伦、挥霍、孤独代代延续。奥雷里亚诺·巴比洛尼亚在羊皮卷中破译出整个家族的命运，读到「家族的第一个人被捆在一棵树上，最后一个人正被蚂蚁吃掉」。就在他读完最后一页时，飓风卷走了马孔多，注定经受百年孤独的家族，不会有第二次机会在大地上出现。</p>
-      </li>
-    </ol>
-  </section>
+    <!-- ============ 12 结语（名字与致谢先不呈现） ============ -->
+    <section class="scene scene-end theme-dark" data-act="12">
+      <h2 class="closing fade" data-d="0">好的小说不提供答案，<br>只提供看见。</h2>
+      <p class="lead fade" data-d="1">托尔斯泰用四个几乎不被注意的小动作，写完了两个人的一生。</p>
+    </section>
 
-  <!-- ============ 第二层 · 人物 ============ -->
-  <section class="section" id="people">
-    <div class="section-head" data-reveal>
-      <p class="kicker">第二层 · 看见人物</p>
-      <h2 class="title">每一种孤独<br>都是一张面孔</h2>
-      <p class="lead">布恩迪亚家族几乎没有一个人不孤独，但每个人的孤独都不一样。</p>
-    </div>
-    <ul class="faces">
-      <li class="face" data-reveal>
-        <p class="role">求索者</p>
-        <h3>何塞·阿尔卡蒂奥·布恩迪亚</h3>
-        <p>沉迷炼金与天文，走得太远，无人能跟上；最终被绑在院中的栗树下，淋着雨说话，直到死去。</p>
-      </li>
-      <li class="face" data-reveal>
-        <p class="role">守望者</p>
-        <h3>乌尔苏拉</h3>
-        <p>家族的脊梁，活过上百岁，看得最清，也最无力；眼睁睁看着一切重复发生，却无能为力。</p>
-      </li>
-      <li class="face" data-reveal>
-        <p class="role">权力者</p>
-        <h3>奥雷里亚诺上校</h3>
-        <p>打了三十二场战争，到头来发现「自己是为了虚荣而战」；晚年把自己关进作坊，做十七个小金鱼，熔化重做。</p>
-      </li>
-      <li class="face" data-reveal>
-        <p class="role">纯真者</p>
-        <h3>美人儿蕾梅黛丝</h3>
-        <p>美得惊心动魄，却对世俗规则浑然不觉，最终裹着床单升天而去；凡尘配不上她，她也无法理解凡尘。</p>
-      </li>
-      <li class="face" data-reveal>
-        <p class="role">爱的孤独</p>
-        <h3>阿玛兰塔</h3>
-        <p>一生在爱与拒绝之间徘徊，晚年为自己织寿衣，白天织，晚上拆；不敢爱，也不会爱。</p>
-      </li>
-      <li class="face" data-reveal>
-        <p class="role">知识者</p>
-        <h3>奥雷里亚诺·巴比洛尼亚</h3>
-        <p>家族最后的血脉，独自在羊皮卷中求索；当他发现自己一直活在早已写好的剧本里，孤独便成了彻底的绝望。</p>
-      </li>
-    </ul>
-    <p class="section-close" data-reveal>孤独不是一种性格，而是一种命运：弥漫在家族血脉里的，是「爱的能力的缺席」。</p>
-  </section>
-
-  <!-- ============ 第三层 · 主题 ============ -->
-  <section class="section section-tinted" id="themes">
-    <div class="section-head" data-reveal>
-      <p class="kicker">第三层 · 追问主题</p>
-      <h2 class="title">孤独从何而来<br>又为何循环</h2>
-    </div>
-    <ol class="themes">
-      <li data-reveal>
-        <span class="n">01</span>
-        <h3>循环的时间</h3>
-        <p>一代代沿用同样的名字，性格与命运随之重复；羊皮卷最终揭示，历史是循环的，一切早有预言。困境的根源，在于不断重复历史，却始终记不住教训。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">02</span>
-        <h3>记忆与遗忘</h3>
-        <p>失眠症瘟疫让全镇人失去记忆，人们不得不在物品上贴标签：「这是牛，每天要挤奶……」一个忘记历史的民族，注定重蹈覆辙。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">03</span>
-        <h3>权力与战争</h3>
-        <p>上校的战争没有意义，保守派与自由派的口号没有区别，普通百姓被裹挟其中。战争改变不了什么，只会制造更多的孤独与死亡。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">04</span>
-        <h3>爱情与乱伦</h3>
-        <p>布恩迪亚家族最深刻的缺陷，是「爱的能力」的缺席。近亲结合、禁忌之恋贯穿七代，最终应验了猪尾巴的诅咒；家族的灭亡，是爱的失败。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">05</span>
-        <h3>进步与掠夺</h3>
-        <p>火车、电灯、香蕉公司，现代性以「文明」之名进入马孔多，实则是资本的掠夺；大屠杀被官方抹杀，马尔克斯以文学为被抹去的历史作证。</p>
-      </li>
-    </ol>
-  </section>
-
-  <!-- ============ 第四层 · 写法 ============ -->
-  <section class="section" id="craft">
-    <div class="section-head" data-reveal>
-      <p class="kicker">第四层 · 品味写法</p>
-      <h2 class="title">魔幻现实主义<br>如何抵达真实</h2>
-      <p class="lead">从「写了什么」进到「怎么写」，欣赏艺术本身。</p>
-    </div>
-    <ul class="crafts">
-      <li data-reveal>
-        <span class="n">01</span>
-        <h3>魔幻与现实的缝合</h3>
-        <p>飞毯、黄蝴蝶、升天的美人、四年的雨，与罢工、屠杀、火车并置，魔幻与日常无缝衔接。用看似荒诞的细节，写出比现实更深的真实。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">02</span>
-        <h3>时间的艺术</h3>
-        <p>「多年以后，面对行刑队，奥雷里亚诺·布恩迪亚上校将会回想起父亲带他去见识冰块的那个遥远的下午」——把未来、现在、过去叠在一起，营造出「一切早已发生」的宿命感。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">03</span>
-        <h3>神话原型与象征</h3>
-        <p>全书以创世、洪水、启示录为框架；冰块象征新知，小金鱼象征徒劳的循环，黄蝴蝶象征禁忌的爱情，蚂蚁象征家族的终结，羊皮卷象征写在纸上的宿命。象征系统严密而自洽。</p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- ============ 第五层 · 意义 ============ -->
-  <section class="section section-tinted" id="meaning">
-    <div class="section-head" data-reveal>
-      <p class="kicker">第五层 · 思索意义</p>
-      <h2 class="title">一个大陆的寓言<br>所有人的处境</h2>
-      <p class="lead">从「怎么写」进到「为什么写」，把作品放回历史与人类的坐标系。</p>
-    </div>
-    <ul class="meanings">
-      <li data-reveal>
-        <span class="n">01</span>
-        <h3>马孔多即拉丁美洲</h3>
-        <p>殖民、独立、内战、外国资本入侵、大屠杀、遗忘。马孔多的毁灭，是拉美被反复掠夺、被遗忘、被抹去的历史的寓言。诺贝尔奖授奖辞称他「反映出一个大陆的生命与矛盾」。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">02</span>
-        <h3>孤独的普遍性</h3>
-        <p>如果《百年孤独》只是拉美寓言，它不会让全世界的读者着迷。沟通的失败、记忆的丧失、意义的虚空、循环的困境——每个人都有自己的「马孔多」，都会在某个时刻感受到「百年孤独」。</p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- ============ 第六层 · 返回自身 ============ -->
-  <section class="section" id="self">
-    <div class="section-head" data-reveal>
-      <p class="kicker">第六层 · 返回自身</p>
-      <h2 class="title">阅读之后的<br>几点思考</h2>
-      <p class="lead">最后一层，从书里走出来，谈谈自己的阅读感受。</p>
-    </div>
-    <ol class="thoughts">
-      <li data-reveal>
-        <span class="n">01</span>
-        <h3>我们能否跳出自己的「马孔多」</h3>
-        <p>历史不会自动前进，循环不会自动打破。能否跳出来，取决于我们是否记得、是否反思、是否敢于改变。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">02</span>
-        <h3>记忆是身份的根</h3>
-        <p>失眠症瘟疫让我想到：一个忘记来处的人，会渐渐不知道自己是谁。记住，是孤独的反面；记忆，是抵抗遗忘与重复的武器。</p>
-      </li>
-      <li data-reveal>
-        <span class="n">03</span>
-        <h3>爱的能力，是孤独的解药</h3>
-        <p>家族不缺少爱的事件，唯独缺少去理解、去接纳、去承担的能力。唯有真正学会去爱，孤独的循环才可能被打破。</p>
-      </li>
-    </ol>
-  </section>
-
-  <!-- ============ 结语 ============ -->
-  <section class="closing" id="closing">
-    <p class="kicker" data-reveal>结语</p>
-    <blockquote class="closing-quote" data-reveal>
-      孤独是人类的宿命，<br>但记住它、理解它、用爱去面对它，<br>是我们唯一能做的反抗。
-    </blockquote>
-    <p class="closing-sub" data-reveal>所谓「百年孤独」，也许不是一百年，而是漫长到需要用一生去理解的孤独。</p>
-  </section>
-
-  <!-- ============ 附录 · 句子 ============ -->
-  <section class="section quotes" id="quotes">
-    <div class="section-head" data-reveal>
-      <p class="kicker">附录 · 值得回味的句子</p>
-      <h2 class="title">马孔多的回声</h2>
-    </div>
-    <ol class="quote-list">
-      <li data-reveal><span class="n">01</span><p>多年以后，面对行刑队，奥雷里亚诺·布恩迪亚上校将会回想起父亲带他去见识冰块的那个遥远的下午。</p></li>
-      <li data-reveal><span class="n">02</span><p>过去都是假的，回忆是一条没有归途的路，以往的一切春天都无法复原。</p></li>
-      <li data-reveal><span class="n">03</span><p>生命中曾经有过的所有灿烂，原来终究，都需要用寂寞来偿还。</p></li>
-      <li data-reveal><span class="n">04</span><p>一个人不是在该死的时候死，而是在能死的时候死。</p></li>
-      <li data-reveal><span class="n">05</span><p>因为注定经受百年孤独的家族不会有第二次机会在大地上出现。</p></li>
-    </ol>
-    <p class="quote-note" data-reveal>以上引文为常见中译本的流行译法，个别词句以具体版本为准。</p>
-  </section>
-
-</main>
-
-<footer class="site-footer">
-  <p>《百年孤独》阅读报告</p>
-  <p class="footer-sub">马孔多的一百年，人类孤独的一百年 · 2026 年 8 月</p>
-</footer>
+    <div class="hint" id="hint">向下滚动 · 轻触画面 · 或按 ↓ 前进</div>
+    <button class="fs" id="fsBtn" type="button" aria-label="全屏">⛶</button>
+    <div class="progress"><i id="progressBar"></i></div>
+  </div>
+</div>
 
 <script src="main.js"></script>
 </body>

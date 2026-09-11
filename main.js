@@ -1,227 +1,374 @@
-/* ============================================================
-   百年孤独 · 阅读报告 —— 动效脚本
-   克制：滚动进度、节点头部、滚动揭示、蝶影画布
-   ============================================================ */
-(() => {
+/* 《复活》阅读分享 · 滚动动效引擎
+   原生 JS，无任何外部依赖（无 CDN / 无字体请求），适合国内网络与 Edge 浏览器 */
+(function () {
   "use strict";
 
-  // 仅当脚本正常运行时才启用“先隐藏再显现”的动画；
-  // 若脚本缺失或出错，页面内容始终保持可见。
-  document.documentElement.classList.add("anim");
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var frame = document.getElementById("frame");
+  var scrollSpace = document.getElementById("scrollSpace");
+  var progressBar = document.getElementById("progressBar");
+  var hint = document.getElementById("hint");
+  var fsBtn = document.getElementById("fsBtn");
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var ACTS = 14;                       // 整条滚动时间轴长度
 
-  /* ---------- 封面入场 ---------- */
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => document.body.classList.add("loaded"));
+  var range = function (v, a, b) {
+    if (b === a) return v >= b ? 1 : 0;
+    return Math.min(1, Math.max(0, (v - a) / (b - a)));
+  };
+  var smooth = function (t) { return t * t * (3 - 2 * t); };
+  var clip = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  var len = function (v) { return v.toFixed(1); };
+
+  /* ============================================================
+     1. 破碎笔画：沿肖像路径采样，初始散落在标题区域
+        滚动时飞向路径 → “文字笔画重组成侧面肖像”
+     ============================================================ */
+  var shardGroup = document.getElementById("shards");
+  var shards = [];
+  var portraitPaths = [].slice.call(document.querySelectorAll("#portrait path"));
+  portraitPaths.forEach(function (path) {
+    var total = path.getTotalLength();
+    var count = Math.max(7, Math.round(total / 40));
+    for (var i = 0; i < count; i++) {
+      var t = (i + 0.5) / count;
+      var p1 = path.getPointAtLength(t * total);
+      var p2 = path.getPointAtLength(Math.min(total, t * total + 20));
+      var line = document.createElementNS(SVGNS, "line");
+      line.setAttribute("x1", len(p1.x));
+      line.setAttribute("y1", len(p1.y));
+      line.setAttribute("x2", len(p2.x));
+      line.setAttribute("y2", len(p2.y));
+      // 起点：散落在封面文字所在区域（左上），随滚动收拢到肖像路径
+      var sx = 130 + Math.random() * 620;
+      var sy = 200 + Math.random() * 250;
+      line.dataset.dx = len(sx - p1.x);
+      line.dataset.dy = len(sy - p1.y);
+      line.dataset.rot = len((Math.random() - 0.5) * 120);
+      shardGroup.appendChild(line);
+      shards.push(line);
+    }
   });
 
-  /* ---------- 顶栏与进度条 ---------- */
-  const header = document.getElementById("siteHeader");
-  const progressBar = document.getElementById("progressBar");
-  let ticking = false;
+  /* ============================================================
+     2. 最终致谢的笔画：散落 → 聚拢成“谢谢 欢迎交流 / 名字”
+     ============================================================ */
+  var finalShardGroup = document.getElementById("finalShards");
+  var finalShards = [];
+  for (var fi = 0; fi < 84; fi++) {
+    var tx = 430 + Math.random() * 740;      // 目标落在致谢文字区域内
+    var ty = 340 + Math.random() * 220;
+    var fl = document.createElementNS(SVGNS, "line");
+    fl.setAttribute("x1", len(tx));
+    fl.setAttribute("y1", len(ty));
+    fl.setAttribute("x2", len(tx + (Math.random() - 0.5) * 52));
+    fl.setAttribute("y2", len(ty + (Math.random() - 0.5) * 52));
+    fl.dataset.dx = len((Math.random() - 0.5) * 1500);
+    fl.dataset.dy = len((Math.random() - 0.5) * 900);
+    fl.dataset.rot = len((Math.random() - 0.5) * 150);
+    finalShardGroup.appendChild(fl);
+    finalShards.push(fl);
+  }
 
-  const onScroll = () => {
+  /* ============================================================
+     3. 线稿准备（描边生长）
+     ============================================================ */
+  function prepStroke(el) {
+    var l = el.getTotalLength ? el.getTotalLength() : 0;
+    el.style.strokeDasharray = l;
+    el.style.strokeDashoffset = l;
+    return l;
+  }
+  var portraitLens = portraitPaths.map(prepStroke);
+  var penPaths = [].slice.call(document.querySelectorAll("#pen path"));
+  var penLens = penPaths.map(prepStroke);
+  var pencilPaths = [].slice.call(document.querySelectorAll("#pencil path"));
+  var pencilLens = pencilPaths.map(prepStroke);
+  var linePaths = [].slice.call(document.querySelectorAll("#lines path"));
+  var lineLens = linePaths.map(prepStroke);
+  var inkLine = document.getElementById("inkLine");
+  var inkLen = prepStroke(inkLine);
+
+  var art = {
+    bloom: document.getElementById("bloom"),
+    shards: shardGroup,
+    portrait: document.getElementById("portrait"),
+    pen: document.getElementById("pen"),
+    inkLine: inkLine,
+    pencil: document.getElementById("pencil"),
+    doves: document.getElementById("doves"),
+    lines: document.getElementById("lines"),
+    finalShards: finalShardGroup
+  };
+  var doveEls = [].slice.call(document.querySelectorAll(".dove"));
+
+  /* ============================================================
+     4. 文字：拆成单字，便于“笔画分崩离析”
+     ============================================================ */
+  function splitChars(root) {
+    var out = [];
+    var walk = function (node) {
+      var kids = [].slice.call(node.childNodes);
+      for (var i = 0; i < kids.length; i++) {
+        var n = kids[i];
+        if (n.nodeType === 3) {
+          var text = n.nodeValue;
+          if (!text || !text.replace(/\s/g, "")) continue;
+          var frag = document.createDocumentFragment();
+          for (var k = 0; k < text.length; k++) {
+            var ch = text.charAt(k);
+            if (/\s/.test(ch)) { frag.appendChild(document.createTextNode(ch)); continue; }
+            var span = document.createElement("span");
+            span.className = "char";
+            span.textContent = ch;
+            span.dataset.dx = len((Math.random() - 0.5) * 700);
+            span.dataset.dy = len((Math.random() - 0.35) * 460);
+            span.dataset.rot = len((Math.random() - 0.5) * 80);
+            frag.appendChild(span);
+            out.push(span);
+          }
+          node.replaceChild(frag, n);
+        } else if (n.nodeType === 1 && n.tagName !== "BR") {
+          walk(n);
+        }
+      }
+    };
+    walk(root);
+    return out;
+  }
+  function applyShatter(chars, t) {
+    for (var i = 0; i < chars.length; i++) {
+      var c = chars[i];
+      var s = smooth(clip(t * 1.15 - (i % 9) * 0.02, 0, 1));
+      c.style.transform = "translate(" + (c.dataset.dx * s) + "px," + (c.dataset.dy * s) +
+        "px) rotate(" + (c.dataset.rot * s) + "deg)";
+      c.style.opacity = (1 - s * 1.2).toFixed(3);
+    }
+  }
+
+  var coverScene = document.querySelector(".scene-cover");
+  var endScene = document.querySelector(".scene-end");
+  var coverChars = coverScene ? splitChars(coverScene) : [];
+  var endChars = endScene ? splitChars(endScene) : [];
+
+  /* ============================================================
+     5. 场景缓存
+     ============================================================ */
+  var ENTRY = { 2: 0.28, 10: 0.30 };      // 让背景明暗切换先完成，文字再出现
+  var scenes = [].slice.call(document.querySelectorAll(".scene")).map(function (el) {
+    var act = parseInt(el.dataset.act || "0", 10);
+    return {
+      el: el,
+      act: act,
+      off: ENTRY[act] || 0,
+      fades: [].slice.call(el.querySelectorAll(".fade"))
+    };
+  });
+  var LAST_ACT = scenes.reduce(function (m, s) { return Math.max(m, s.act); }, 0);
+
+  /* 场景进出：淡入 → 停留 → 淡出（相邻场景交叉过渡，衔接自然） */
+  function sceneOpacity(p, act, off) {
+    if (act === 0) return 1;                                  // 封面由单字碎裂控制
+    var inA = act - 0.22 + off, inB = act + 0.20 + off;
+    var inP = smooth(range(p, inA, inB));
+    if (act === LAST_ACT) return inP;
+    var outA = act + 0.82 + off, outB = act + 1.06 + off;
+    return inP * (1 - smooth(range(p, outA, outB)));
+  }
+
+  /* ============================================================
+     6. 渲染
+     ============================================================ */
+  var maxScroll = 1;
+  function measure() {
+    maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  }
+
+  function render() {
+    var p = clip((window.scrollY || window.pageYOffset || 0) / maxScroll * ACTS, 0, ACTS);
+
+    /* --- 场景文字 --- */
+    for (var i = 0; i < scenes.length; i++) {
+      var s = scenes[i];
+      var op = sceneOpacity(p, s.act, s.off);
+      s.el.style.opacity = op;
+      var gone = op < 0.01 || (s.act === 0 && p > 1.55);
+      s.el.style.visibility = gone ? "hidden" : "visible";
+      s.el.style.transform = "scale(" + (1 + (1 - op) * 0.03).toFixed(4) + ")";
+      var t0 = p - (s.act - 0.22 + s.off);
+      for (var j = 0; j < s.fades.length; j++) {
+        var f = s.fades[j];
+        var d = parseFloat(f.dataset.d || "0");
+        var e = s.act === 0 ? 1 : smooth(range(t0, 0.06 + d * 0.075, 0.40 + d * 0.075));
+        f.style.opacity = e;
+        f.style.transform = "translateY(" + ((1 - e) * 0.9).toFixed(3) + "em)";
+      }
+    }
+
+    /* --- 背景由晨光渐入夜色 --- */
+    var night = clip(1 - smooth(range(p, 2.00, 2.52)) + smooth(range(p, 9.95, 10.45)), 0, 1);
+    var dawn = 1 - night;
+    frame.style.setProperty("--o-night", night.toFixed(3));
+    frame.style.setProperty("--o-dawn", (dawn * 0.96).toFixed(3));
+    frame.style.setProperty("--o-ink", (dawn * 0.62).toFixed(3));
+    document.documentElement.style.setProperty("--art", mix("#23282D", "#F5F3EE", night));
+    document.documentElement.style.setProperty("--bloom",
+      night > 0.5 ? "rgba(245,243,238," + (0.10 + night * 0.05).toFixed(2) + ")"
+                  : "rgba(35,40,45,0.16)");
+
+    /* --- 封面文字：笔画分崩离析 --- */
+    var coverT = smooth(range(p, 0.84, 1.30));
+    applyShatter(coverChars, coverT);
+    coverScene.style.filter = coverT > 0.02 ? "blur(" + (coverT * 3.4).toFixed(2) + "px)" : "none";
+
+    /* --- 散落笔画重组成肖像 --- */
+    var shardIn = smooth(range(p, 0.86, 1.06));
+    var assemble = smooth(range(p, 1.02, 1.80));
+    var shardOut = smooth(range(p, 1.80, 2.12));
+    art.shards.style.opacity = (shardIn * (1 - shardOut)).toFixed(3);
+    for (var k = 0; k < shards.length; k++) {
+      var el = shards[k];
+      var back = 1 - assemble;
+      el.style.transform = "translate(" + (el.dataset.dx * back) + "px," +
+        (el.dataset.dy * back) + "px) rotate(" + (el.dataset.rot * back) + "deg)";
+    }
+
+    /* --- 肖像描边 + 镜头穿过 --- */
+    var draw = smooth(range(p, 1.34, 1.96));
+    for (var a = 0; a < portraitPaths.length; a++) {
+      portraitPaths[a].style.strokeDashoffset = (portraitLens[a] * (1 - draw)).toFixed(1);
+    }
+    var passT = smooth(range(p, 2.00, 2.80));
+    art.portrait.style.opacity = (draw * (1 - passT)).toFixed(3);
+    art.portrait.style.transform = "scale(" + (1 + passT * 3.1).toFixed(3) + ")";
+    art.portrait.style.transformOrigin = "830px 380px";
+
+    /* --- 钢笔 + 墨线 --- */
+    var penT = smooth(range(p, 2.52, 3.00));
+    for (var b = 0; b < penPaths.length; b++) {
+      penPaths[b].style.strokeDashoffset = (penLens[b] * (1 - penT)).toFixed(1);
+    }
+    art.pen.style.opacity = (penT * (1 - smooth(range(p, 3.90, 4.40)))).toFixed(3);
+    var inkT = smooth(range(p, 2.88, 3.64));
+    inkLine.style.strokeDashoffset = (inkLen * (1 - inkT)).toFixed(1);
+    art.inkLine.style.opacity = (inkT * (1 - smooth(range(p, 3.85, 4.35)))).toFixed(3);
+
+    /* --- 墨水晕染（第四页的四格分区） --- */
+    var bloomT = smooth(range(p, 3.55, 4.55));
+    art.bloom.style.opacity = (bloomT * (1 - smooth(range(p, 5.10, 6.00)))).toFixed(3);
+    art.bloom.style.transform = "scale(" + (0.7 + bloomT * 0.5).toFixed(3) + ")";
+    art.bloom.style.transformOrigin = "800px 480px";
+
+    /* --- 墨水勾出铅笔 --- */
+    var pencilT = smooth(range(p, 4.55, 5.25));
+    for (var c = 0; c < pencilPaths.length; c++) {
+      pencilPaths[c].style.strokeDashoffset = (pencilLens[c] * (1 - pencilT)).toFixed(1);
+    }
+    art.pencil.style.opacity = (pencilT * (1 - smooth(range(p, 5.80, 6.40)))).toFixed(3);
+
+    /* --- 鸽子：第八页出现，第九页飞走 --- */
+    var doveIn = smooth(range(p, 8.05, 8.65));
+    var doveOut = smooth(range(p, 9.05, 9.70));
+    var doveRise = smooth(range(p, 9.30, 10.10));
+    art.doves.style.opacity = (doveIn * (1 - doveOut)).toFixed(3);
+    for (var d = 0; d < doveEls.length; d++) {
+      var de = doveEls[d];
+      var dir = d % 2 === 0 ? -1 : 1;
+      var dx = 210 + d * 268 + Math.sin(p * 2.1 + d) * 14 - doveRise * dir * 260;
+      var dy = 150 + (d % 3) * 96 + Math.cos(p * 1.7 + d) * 10 - doveOut * 320 - doveRise * 140;
+      de.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ") scale(" + (0.85 + (d % 3) * 0.22).toFixed(2) + ")");
+      de.style.opacity = (doveIn * (1 - doveOut * 0.9) * (0.55 + 0.45 * Math.abs(Math.sin(d + 0.7)))).toFixed(3);
+    }
+
+    /* --- 两条线（第九页） --- */
+    var lineT = smooth(range(p, 9.15, 9.95));
+    for (var e2 = 0; e2 < linePaths.length; e2++) {
+      linePaths[e2].style.strokeDashoffset = (lineLens[e2] * (1 - lineT)).toFixed(1);
+    }
+    art.lines.style.opacity = (lineT * (1 - smooth(range(p, 10.15, 10.70)))).toFixed(3);
+    art.lines.style.transform = "translateY(" + (-smooth(range(p, 10.10, 10.80)) * 80).toFixed(1) + "px)";
+
+    /* --- 收尾：上一页文字碎裂 → 笔画聚拢成致谢 --- */
+    var endT = smooth(range(p, 12.58, 13.14));
+    applyShatter(endChars, endT);
+
+    var fIn = smooth(range(p, 12.82, 13.06));
+    var fConverge = smooth(range(p, 12.94, 13.58));
+    var fOut = smooth(range(p, 13.56, 13.92));
+    art.finalShards.style.opacity = (fIn * (1 - fOut)).toFixed(3);
+    for (var q = 0; q < finalShards.length; q++) {
+      var fs2 = finalShards[q];
+      var bk = 1 - fConverge;
+      fs2.style.transform = "translate(" + (fs2.dataset.dx * bk) + "px," +
+        (fs2.dataset.dy * bk) + "px) rotate(" + (fs2.dataset.rot * bk) + "deg)";
+    }
+    var thanksT = smooth(range(p, 13.14, 13.62));
+    var namesT = smooth(range(p, 13.48, 13.92));
+    var ct = document.getElementById("clipThanksRect");
+    var cn = document.getElementById("clipNamesRect");
+    if (ct) ct.setAttribute("width", (thanksT * 820).toFixed(1));
+    if (cn) cn.setAttribute("width", (namesT * 560).toFixed(1));
+
+    /* --- 进度与提示 --- */
+    progressBar.style.width = (p / ACTS * 100).toFixed(2) + "%";
+    if (p > 0.25) hint.classList.add("hide");
+    else hint.classList.remove("hide");
+  }
+
+  /* ---------- 颜色插值 ---------- */
+  function hex2rgb(h) {
+    return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+  }
+  function mix(c1, c2, t) {
+    var a = hex2rgb(c1), b = hex2rgb(c2);
+    return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * t) + "," +
+      Math.round(a[1] + (b[1] - a[1]) * t) + "," +
+      Math.round(a[2] + (b[2] - a[2]) * t) + ")";
+  }
+
+  /* ---------- 交互 ---------- */
+  var ticking = false;
+  function onScroll() {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(() => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-      if (progressBar) progressBar.style.width = `${(p * 100).toFixed(2)}%`;
-      header.classList.toggle("scrolled", window.scrollY > 8);
-      ticking = false;
-    });
-  };
-
+    window.requestAnimationFrame(function () { render(); ticking = false; });
+  }
   window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  window.addEventListener("resize", function () { measure(); render(); });
 
-  /* ---------- 滚动揭示（带轻微错落） ---------- */
-  const revealEls = document.querySelectorAll("[data-reveal]");
-
-  // 为每个元素预设错落的过渡延迟
-  revealEls.forEach((el) => {
-    const siblings = [...el.parentElement.children].filter((c) => c.hasAttribute("data-reveal"));
-    const idx = siblings.indexOf(el);
-    el.style.setProperty("--d", `${Math.min(idx, 5) * 0.09}s`);
-  });
-
-  if (reduceMotion) {
-    // 系统要求减少动效：内容直接全部显示
-    revealEls.forEach((el) => el.classList.add("in"));
-  } else {
-    // 无论正常滚动还是快速跳转，只要元素进入视口就显示；
-    // 不依赖特定浏览器接口，保证内容永远不会被动画“藏住”。
-    let revealDone = false;
-    const revealInView = () => {
-      if (revealDone) return;
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      let allDone = true;
-      revealEls.forEach((el) => {
-        if (el.classList.contains("in")) return;
-        const r = el.getBoundingClientRect();
-        if (r.top < vh * 0.94 && r.bottom > 0) {
-          el.classList.add("in");
-        } else {
-          allDone = false;
-        }
-      });
-      if (allDone) revealDone = true;
-    };
-    let ticking = false;
-    const onScrollOrResize = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        revealInView();
-        ticking = false;
-      });
-    };
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize);
-    revealInView();
+  function goAct(delta) {
+    var actPx = maxScroll / ACTS;
+    var cur = Math.round((window.scrollY || 0) / actPx);
+    var next = clip(cur + delta, 0, ACTS);
+    window.scrollTo({ top: next * actPx, behavior: "smooth" });
   }
-
-  /* ---------- 蝶影画布：若有若无的金色蝴蝶与萤火 ---------- */
-  const canvas = document.getElementById("butterflies");
-  const ctx = canvas.getContext("2d");
-  const GOLD = { r: 217, g: 168, b: 94 };
-
-  let W = 0, H = 0, DPR = 1;
-  let butterflies = [];
-  let fireflies = [];
-  let rafId = null;
-
-  function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    seed();
-  }
-
-  function seed() {
-    const count = Math.max(4, Math.min(7, Math.round(W / 340)));
-    butterflies = Array.from({ length: count }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      size: 11 + Math.random() * 15,
-      speed: 0.12 + Math.random() * 0.22,
-      phase: Math.random() * Math.PI * 2,
-      wander: Math.random() * Math.PI * 2,
-      alpha: 0.5 + Math.random() * 0.28,
-      flip: Math.random() > 0.5 ? 1 : -1,
-    }));
-    fireflies = Array.from({ length: Math.max(8, Math.round(W / 130)) }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: 0.8 + Math.random() * 1.5,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.4 + Math.random() * 0.9,
-      alpha: 0.2 + Math.random() * 0.24,
-    }));
-  }
-
-  function butterfly(ctx, b, t) {
-    const flap = Math.sin(t * b.speed + b.phase);
-    const wobble = 0.72 + 0.28 * flap;          // 振翅幅度
-    const yaw = Math.sin(t * b.speed * 0.5 + b.phase) * 0.35;
-    const a = b.alpha;
-
-    ctx.save();
-    ctx.translate(b.x, b.y);
-    ctx.rotate(yaw);
-    ctx.scale(b.flip, 1);
-
-    const s = b.size;
-    ctx.fillStyle = `rgba(${GOLD.r},${GOLD.g},${GOLD.b},${a})`;
-    ctx.beginPath();
-    // 上翅
-    ctx.moveTo(0, 0);
-    ctx.bezierCurveTo(-s * 0.55 * wobble, -s * 0.62, -s * 1.15 * wobble, -s * 0.5, -s * 0.82 * wobble, s * 0.08);
-    ctx.bezierCurveTo(-s * 0.45 * wobble, s * 0.05, -s * 0.2 * wobble, s * 0.14, 0, s * 0.22);
-    ctx.closePath();
-    ctx.fill();
-    // 下翅
-    ctx.beginPath();
-    ctx.moveTo(0, s * 0.18);
-    ctx.bezierCurveTo(-s * 0.42 * wobble, s * 0.12, -s * 0.72 * wobble, s * 0.4, -s * 0.5 * wobble, s * 0.62);
-    ctx.bezierCurveTo(-s * 0.3 * wobble, s * 0.72, -s * 0.12 * wobble, s * 0.5, 0, s * 0.34);
-    ctx.closePath();
-    ctx.fill();
-    // 身体
-    ctx.strokeStyle = `rgba(${GOLD.r},${GOLD.g},${GOLD.b},${Math.min(1, a + 0.15)})`;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, -s * 0.05);
-    ctx.lineTo(0, s * 0.62);
-    ctx.stroke();
-
-    ctx.restore();
-  }
-
-  function draw(t) {
-    ctx.clearRect(0, 0, W, H);
-
-    // 萤火：缓慢呼吸的微光
-    for (const f of fireflies) {
-      const pulse = 0.5 + 0.5 * Math.sin(t * f.speed + f.phase);
-      ctx.fillStyle = `rgba(${GOLD.r},${GOLD.g},${GOLD.b},${(f.alpha * pulse).toFixed(3)})`;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-      ctx.fill();
+  window.addEventListener("keydown", function (ev) {
+    var k = ev.key;
+    if (k === "ArrowDown" || k === "PageDown" || k === " " || k === "Enter") {
+      ev.preventDefault(); goAct(1);
+    } else if (k === "ArrowUp" || k === "PageUp") {
+      ev.preventDefault(); goAct(-1);
+    } else if (k === "Home") {
+      ev.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (k === "End") {
+      ev.preventDefault(); window.scrollTo({ top: maxScroll, behavior: "smooth" });
     }
-
-    // 蝴蝶：缓慢上浮、左右徘徊
-    for (const b of butterflies) {
-      const t0 = t * 0.001;
-      b.x += Math.sin(t0 * 0.4 + b.wander) * 0.28;
-      b.y -= b.speed * 0.35;
-      if (b.y < -60) { b.y = H + 50; b.x = Math.random() * W; }
-      if (b.x < -60) b.x = W + 40;
-      if (b.x > W + 60) b.x = -40;
-      butterfly(ctx, b, t0);
-    }
-
-    rafId = requestAnimationFrame(draw);
-  }
-
-  function start() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(draw);
-  }
-
-  function stop() {
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  }
-
-  function initCanvas() {
-    resize();
-    if (reduceMotion) {
-      // 减少动效：绘制一帧静态蝶影，不再运行动画
-      draw(0);
-      stop();
-      return;
-    }
-    start();
-  }
-
-  window.addEventListener("resize", () => {
-    resize();
-    if (!reduceMotion) stop();
   });
-  window.addEventListener("resize", () => {
-    if (!reduceMotion) start();
+  /* 白板/触屏：轻触画面推进一段 */
+  frame.addEventListener("click", function (ev) {
+    if (ev.target && ev.target.closest && ev.target.closest("button")) return;
+    goAct(1);
   });
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stop();
-    else if (!reduceMotion) start();
-  });
+  if (fsBtn) {
+    fsBtn.addEventListener("click", function () {
+      var el = document.documentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (el.requestFullscreen) el.requestFullscreen();
+    });
+  }
 
-  initCanvas();
+  measure();
+  render();
+  window.addEventListener("load", function () { measure(); render(); });
 })();
