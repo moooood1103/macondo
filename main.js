@@ -12,7 +12,8 @@
 
   var SHIFT = 1.6;                     // 肖像后新增"停顿+名字"节拍，其后内容整体后移
   var SHIFT2 = 0.7;                    // 钢笔等第二屏文字完全渐隐之后才出现
-  var ACTS = 14 + SHIFT + SHIFT2;      // 整条滚动时间轴长度
+  var EXTRA3 = 0.35;                   // 第三屏（主线）多停留一会儿
+  var ACTS = 14 + SHIFT + SHIFT2 + EXTRA3;  // 整条滚动时间轴长度
 
   var range = function (v, a, b) {
     if (b === a) return v >= b ? 1 : 0;
@@ -160,9 +161,11 @@
   function actOffset(act) {                 // 肖像之后的场景统一后移
     if (act <= 1) return 0;
     if (act === 2) return ENTRY[2];          // 第二屏保持原位（先渐隐）
-    var base = SHIFT + SHIFT2;               // 第三屏起再让出钢笔的时间
-    return ENTRY[act] !== undefined ? ENTRY[act] + SHIFT2 : base;
+    var extra = act >= 4 ? EXTRA3 : 0;       // 第三屏之后让出主线的时间
+    var base = SHIFT + SHIFT2 + extra;
+    return ENTRY[act] !== undefined ? ENTRY[act] + SHIFT2 + extra : base;
   }
+  function sceneHold(act) { return act === 3 ? EXTRA3 : 0; }
   var scenes = [].slice.call(document.querySelectorAll(".scene")).map(function (el) {
     var act = parseInt(el.dataset.act || "0", 10);
     return {
@@ -180,7 +183,8 @@
     var inA = act - 0.22 + off, inB = act + 0.20 + off;
     var inP = smooth(range(p, inA, inB));
     if (act === LAST_ACT) return inP;
-    var outA = act + 0.82 + off, outB = act + 1.06 + off;
+    var hold = sceneHold(act);
+    var outA = act + 0.82 + off + hold, outB = act + 1.06 + off + hold;
     return inP * (1 - smooth(range(p, outA, outB)));
   }
 
@@ -188,12 +192,38 @@
      6. 渲染
      ============================================================ */
   var maxScroll = 1;
+  var lineGeom = null;
+  var lineSteps = [];
+  function measureLine() {
+    var sceneLine = document.querySelector('.scene[data-act="3"]');
+    var stepsEl = sceneLine ? sceneLine.querySelector(".steps") : null;
+    if (!sceneLine || !stepsEl) return;
+    var fr = frame.getBoundingClientRect();
+    if (!fr.width) return;
+    var k = 1600 / fr.width;                       // CSS px -> SVG 视图坐标
+    var sr = stepsEl.getBoundingClientRect();
+    var x1 = (sr.left - fr.left) * k - 12;
+    var x2 = (sr.right - fr.left) * k + 12;
+    var y = (sr.bottom - fr.top) * k + 30;         // 文字下方
+    lineGeom = { x1: x1, x2: x2, y: y };
+    inkLine.setAttribute("x1", x1.toFixed(1));
+    inkLine.setAttribute("y1", y.toFixed(1));
+    inkLine.setAttribute("x2", x2.toFixed(1));
+    inkLine.setAttribute("y2", y.toFixed(1));
+    inkLen = inkLine.getTotalLength();
+    inkLine.style.strokeDasharray = inkLen;
+    lineSteps = [].slice.call(sceneLine.querySelectorAll(".step"));
+    lineFoot = sceneLine.querySelector(".foot");
+  }
+  var lineFoot = null;
   function measure() {
     maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    measureLine();
   }
 
   function render() {
     var p = clip((window.scrollY || window.pageYOffset || 0) / maxScroll * ACTS, 0, ACTS);
+    var inkT = smooth(range(p, 5.42, 6.00));        // 墨迹从左到右的进度（笔尖所在位置）
 
     /* --- 场景文字 --- */
     for (var i = 0; i < scenes.length; i++) {
@@ -211,10 +241,24 @@
         f.style.opacity = e;
         f.style.transform = "translateY(" + ((1 - e) * 0.9).toFixed(3) + "em)";
       }
+      /* 第三屏：三段主线随墨迹从左到右依次亮起，速度与喷墨一致 */
+      if (s.act === 3) {
+        for (var q = 0; q < lineSteps.length; q++) {
+          var c = (q + 0.5) / lineSteps.length;
+          var tt = smooth(range(inkT, c - 0.07, c + 0.07));
+          lineSteps[q].style.opacity = tt;
+          lineSteps[q].style.transform = "translateY(" + ((1 - tt) * 0.5).toFixed(3) + "em)";
+        }
+        if (lineFoot) {
+          var ft = smooth(range(inkT, 0.93, 1.07));
+          lineFoot.style.opacity = ft;
+          lineFoot.style.transform = "translateY(" + ((1 - ft) * 0.5).toFixed(3) + "em)";
+        }
+      }
     }
 
     /* --- 背景由晨光渐入夜色 --- */
-    var night = clip(1 - smooth(range(p, 3.30, 3.80)) + smooth(range(p, 12.25, 12.75)), 0, 1);
+    var night = clip(1 - smooth(range(p, 3.30, 3.80)) + smooth(range(p, 12.60, 13.10)), 0, 1);
     var dawn = 1 - night;
     frame.style.setProperty("--o-night", night.toFixed(3));
     frame.style.setProperty("--o-dawn", (dawn * 0.96).toFixed(3));
@@ -260,32 +304,36 @@
     art.portrait.style.transformOrigin = "830px 380px";
 
     /* --- 钢笔 + 墨线 --- */
-    var penT = smooth(range(p, 4.82, 5.30));
+    var penT = smooth(range(p, 5.30, 5.50));            // 钢笔先转正、浮现
     for (var b = 0; b < penPaths.length; b++) {
       penPaths[b].style.strokeDashoffset = (penLens[b] * (1 - penT)).toFixed(1);
     }
-    art.pen.style.opacity = (penT * (1 - smooth(range(p, 6.20, 6.70)))).toFixed(3);
-    var inkT = smooth(range(p, 5.18, 5.94));
+    art.pen.style.opacity = (penT * (1 - smooth(range(p, 6.10, 6.45)))).toFixed(3);
     inkLine.style.strokeDashoffset = (inkLen * (1 - inkT)).toFixed(1);
-    art.inkLine.style.opacity = (inkT * (1 - smooth(range(p, 6.15, 6.65)))).toFixed(3);
+    art.inkLine.style.opacity = ((penT ? 1 : 0) * (1 - smooth(range(p, 6.35, 6.75)))).toFixed(3);
+    if (lineGeom) {                                      // 逆时针 90°：笔身在后、笔尖朝右
+      var nibX = lineGeom.x1 + (lineGeom.x2 - lineGeom.x1) * inkT;
+      art.pen.setAttribute("transform",
+        "translate(" + nibX.toFixed(1) + "," + lineGeom.y.toFixed(1) + ") rotate(-90) translate(-841,-326)");
+    }
 
     /* --- 墨水晕染（第四页的四格分区） --- */
-    var bloomT = smooth(range(p, 5.85, 6.85));
-    art.bloom.style.opacity = (bloomT * (1 - smooth(range(p, 7.40, 8.30)))).toFixed(3);
+    var bloomT = smooth(range(p, 6.20, 7.20));
+    art.bloom.style.opacity = (bloomT * (1 - smooth(range(p, 7.75, 8.65)))).toFixed(3);
     art.bloom.style.transform = "scale(" + (0.7 + bloomT * 0.5).toFixed(3) + ")";
     art.bloom.style.transformOrigin = "800px 480px";
 
     /* --- 墨水勾出铅笔 --- */
-    var pencilT = smooth(range(p, 6.85, 7.55));
+    var pencilT = smooth(range(p, 7.20, 7.90));
     for (var c = 0; c < pencilPaths.length; c++) {
       pencilPaths[c].style.strokeDashoffset = (pencilLens[c] * (1 - pencilT)).toFixed(1);
     }
-    art.pencil.style.opacity = (pencilT * (1 - smooth(range(p, 8.10, 8.70)))).toFixed(3);
+    art.pencil.style.opacity = (pencilT * (1 - smooth(range(p, 8.45, 9.05)))).toFixed(3);
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
-    var doveIn = smooth(range(p, 10.35, 10.95));
-    var doveOut = smooth(range(p, 11.35, 12.00));
-    var doveRise = smooth(range(p, 11.60, 12.40));
+    var doveIn = smooth(range(p, 10.70, 11.30));
+    var doveOut = smooth(range(p, 11.70, 12.35));
+    var doveRise = smooth(range(p, 11.95, 12.75));
     art.doves.style.opacity = (doveIn * (1 - doveOut)).toFixed(3);
     for (var d = 0; d < doveEls.length; d++) {
       var de = doveEls[d];
@@ -297,20 +345,20 @@
     }
 
     /* --- 两条线（第九页） --- */
-    var lineT = smooth(range(p, 11.45, 12.25));
+    var lineT = smooth(range(p, 11.80, 12.60));
     for (var e2 = 0; e2 < linePaths.length; e2++) {
       linePaths[e2].style.strokeDashoffset = (lineLens[e2] * (1 - lineT)).toFixed(1);
     }
-    art.lines.style.opacity = (lineT * (1 - smooth(range(p, 12.45, 13.00)))).toFixed(3);
-    art.lines.style.transform = "translateY(" + (-smooth(range(p, 12.40, 13.10)) * 80).toFixed(1) + "px)";
+    art.lines.style.opacity = (lineT * (1 - smooth(range(p, 12.80, 13.35)))).toFixed(3);
+    art.lines.style.transform = "translateY(" + (-smooth(range(p, 12.75, 13.45)) * 80).toFixed(1) + "px)";
 
     /* --- 收尾：上一页文字碎裂 → 笔画聚拢成致谢 --- */
-    var endT = smooth(range(p, 14.88, 15.44));
+    var endT = smooth(range(p, 15.23, 15.79));
     applyShatter(endChars, endT);
 
-    var fIn = smooth(range(p, 15.12, 15.36));
-    var fConverge = smooth(range(p, 15.24, 15.88));
-    var fOut = smooth(range(p, 15.86, 16.22));
+    var fIn = smooth(range(p, 15.47, 15.71));
+    var fConverge = smooth(range(p, 15.59, 16.23));
+    var fOut = smooth(range(p, 16.21, 16.57));
     art.finalShards.style.opacity = (fIn * (1 - fOut)).toFixed(3);
     for (var q = 0; q < finalShards.length; q++) {
       var fs2 = finalShards[q];
@@ -318,8 +366,8 @@
       fs2.style.transform = "translate(" + (fs2.dataset.dx * bk) + "px," +
         (fs2.dataset.dy * bk) + "px) rotate(" + (fs2.dataset.rot * bk) + "deg)";
     }
-    var thanksT = smooth(range(p, 15.44, 15.92));
-    var namesT = smooth(range(p, 15.78, 16.22));
+    var thanksT = smooth(range(p, 15.79, 16.27));
+    var namesT = smooth(range(p, 16.13, 16.57));
     var ct = document.getElementById("clipThanksRect");
     var cn = document.getElementById("clipNamesRect");
     if (ct) ct.setAttribute("width", (thanksT * 820).toFixed(1));

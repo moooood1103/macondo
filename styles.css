@@ -25,7 +25,7 @@ body{
 }
 
 /* 滚动驱动区：14 段，每段约一次翻页的滚动量 */
-.scroll-space{height:calc(16.3 * 92vh)}
+.scroll-space{height:calc(16.65 * 92vh)}
 
 /* ---------- 16:9 舞台 ---------- */
 .stage{
@@ -234,3 +234,6 @@ body{
   white-space:nowrap;color:#f5f3ee;opacity:0;pointer-events:none;
   will-change:opacity,transform;
 }
+
+/* 第三屏：脚注下移，给下方横向墨线与钢笔留出空间 */
+.scene-line .foot{margin-top:4.4em}
