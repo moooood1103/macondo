@@ -324,11 +324,11 @@
     art.bloom.style.transformOrigin = "800px 480px";
 
     /* --- 墨水勾出铅笔 --- */
-    var pencilT = smooth(range(p, 7.20, 7.90));
+    var pencilT = smooth(range(p, 7.85, 8.45));
     for (var c = 0; c < pencilPaths.length; c++) {
       pencilPaths[c].style.strokeDashoffset = (pencilLens[c] * (1 - pencilT)).toFixed(1);
     }
-    art.pencil.style.opacity = (pencilT * (1 - smooth(range(p, 8.45, 9.05)))).toFixed(3);
+    art.pencil.style.opacity = (pencilT * (1 - smooth(range(p, 8.45, 8.75)))).toFixed(3);
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
     var doveIn = smooth(range(p, 10.70, 11.30));
