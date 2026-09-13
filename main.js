@@ -336,7 +336,7 @@
     art.pencil.style.opacity = (pencilT * (1 - smooth(range(p, 8.45, 8.75)))).toFixed(3);
 
     /* --- 细节二：两个侧面肖像面对面交锋（随文字同屏出现，再相向靠近） --- */
-    var duelOp = smooth(range(p, 8.48, 8.66)) * (1 - smooth(range(p, 9.45, 9.71)));
+    var duelOp = 0.55 * smooth(range(p, 8.48, 8.66)) * (1 - smooth(range(p, 9.45, 9.71)));
     if (art.duel) art.duel.style.opacity = duelOp.toFixed(3);
     var duelHalf = Math.floor(duelPaths.length / 2);
     for (var u = 0; u < duelPaths.length; u++) {
@@ -347,8 +347,8 @@
       duelPaths[u].style.strokeDashoffset = (duelLens[u] * (1 - tt2)).toFixed(1);
     }
     var duelDrift = smooth(range(p, 9.02, 9.45)) * 10;   // 相向靠近 10 单位
-    if (duelL) duelL.setAttribute("transform", "translate(" + (414 + duelDrift).toFixed(1) + ",75) scale(0.85)");
-    if (duelR) duelR.setAttribute("transform", "translate(" + (1966 - duelDrift).toFixed(1) + ",75) scale(-0.85,0.85)");
+    if (duelL) duelL.setAttribute("transform", "translate(" + (1104 + duelDrift).toFixed(1) + ",195) scale(1.15)");
+    if (duelR) duelR.setAttribute("transform", "translate(" + (1300 - duelDrift).toFixed(1) + ",176) scale(-1.15,1.15)");
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
     var doveIn = smooth(range(p, 10.70, 11.30));
