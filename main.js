@@ -346,9 +346,9 @@
       var tt2 = smooth(range(p, begin, begin + 0.30));
       duelPaths[u].style.strokeDashoffset = (duelLens[u] * (1 - tt2)).toFixed(1);
     }
-    var duelDrift = smooth(range(p, 8.95, 9.45)) * 14;   // 相向靠近 14 单位
-    if (duelL) duelL.setAttribute("transform", "translate(" + (990 + duelDrift).toFixed(1) + ",107) scale(1.5)");
-    if (duelR) duelR.setAttribute("transform", "translate(" + (1505 - duelDrift).toFixed(1) + ",105) scale(-1.5,1.5)");
+    var duelDrift = smooth(range(p, 8.92, 9.50)) * 60;   // 从 70 单位间距 → 50 单位重合
+    if (duelL) duelL.setAttribute("transform", "translate(" + (879 + duelDrift).toFixed(1) + ",107) scale(1.5)");
+    if (duelR) duelR.setAttribute("transform", "translate(" + (1585 - duelDrift).toFixed(1) + ",105) scale(-1.5,1.5)");
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
     var doveIn = smooth(range(p, 10.70, 11.30));
