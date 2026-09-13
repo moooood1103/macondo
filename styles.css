@@ -97,6 +97,8 @@ body{
 #shards line{opacity:1}
 #finalShards line{opacity:1}
 #finalGroup,#finalGroup g{opacity:1}
+#duel,#duel g{opacity:1}
+#duel path{fill:none;stroke:var(--art);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* 单字碎裂（封面 / 结语） */
 .char{display:inline-block;will-change:transform,opacity}
