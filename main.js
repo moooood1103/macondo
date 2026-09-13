@@ -346,7 +346,7 @@
       var tt2 = smooth(range(p, begin, begin + 0.30));
       duelPaths[u].style.strokeDashoffset = (duelLens[u] * (1 - tt2)).toFixed(1);
     }
-    var duelDrift = smooth(range(p, 8.92, 9.50)) * 60;   // 从 70 单位间距 → 50 单位重合
+    var duelDrift = smooth(range(p, 8.90, 9.55)) * 100;  // 起点间距 70 → 终点深度重合 130（与放大量一致）
     if (duelL) duelL.setAttribute("transform", "translate(" + (879 + duelDrift).toFixed(1) + ",107) scale(1.5)");
     if (duelR) duelR.setAttribute("transform", "translate(" + (1585 - duelDrift).toFixed(1) + ",105) scale(-1.5,1.5)");
 
