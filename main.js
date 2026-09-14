@@ -98,6 +98,9 @@
   var grabPaths = [].slice.call(document.querySelectorAll("#grab path"));
   var grabLens = grabPaths.map(prepStroke);
   var grabEl = document.getElementById("grab");
+  var doveBigPaths = [].slice.call(document.querySelectorAll("#doveBig path"));
+  var doveBigLens = doveBigPaths.map(prepStroke);
+  var doveBigEl = document.getElementById("doveBig");
 
   var art = {
     bloom: document.getElementById("bloom"),
@@ -108,6 +111,7 @@
     pencil: document.getElementById("pencil"),
     duel: document.getElementById("duel"),
     grab: grabEl,
+    doveBig: doveBigEl,
     doves: document.getElementById("doves"),
     lines: document.getElementById("lines"),
     finalShards: finalShardGroup
@@ -365,6 +369,19 @@
     if (grabEl) {
       var grabRise = smooth(range(p, 9.55, 10.35)) * 10;   // 轻轻向上一提，像"抓起来"
       grabEl.setAttribute("transform", "translate(1070," + (293 - grabRise).toFixed(1) + ") scale(1.5)");
+    }
+
+    /* --- 细节四：极简白鸽（逐线描出，随后与背景小鸽群交棒） --- */
+    var doveBigOp = 0.55 * smooth(range(p, 10.55, 10.78)) * (1 - smooth(range(p, 11.45, 11.71)));
+    if (art.doveBig) art.doveBig.style.opacity = doveBigOp.toFixed(3);
+    for (var dq = 0; dq < doveBigPaths.length; dq++) {
+      var db = 10.60 + dq * 0.05;
+      var dt = smooth(range(p, db, db + 0.42));
+      doveBigPaths[dq].style.strokeDashoffset = (doveBigLens[dq] * (1 - dt)).toFixed(1);
+    }
+    if (doveBigEl) {
+      var doveRise2 = smooth(range(p, 10.60, 11.40)) * 12;   // 轻轻上浮，像要起飞
+      doveBigEl.setAttribute("transform", "translate(894," + (223 - doveRise2).toFixed(1) + ") scale(1.6)");
     }
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
