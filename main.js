@@ -42,11 +42,11 @@
       line.setAttribute("y1", len(p1.y));
       line.setAttribute("x2", len(p2.x));
       line.setAttribute("y2", len(p2.y));
-      // 起点：散落在封面文字所在区域（左上），随滚动收拢到肖像路径
-      var sx = 130 + Math.random() * 620;
-      var sy = 200 + Math.random() * 250;
-      line.dataset.dx = len(sx - p1.x);
-      line.dataset.dy = len(sy - p1.y);
+      // 起点：围绕笔画自身小幅飘散，随滚动精准归位（不再满屏飞）
+      var angP = Math.random() * Math.PI * 2;
+      var distP = 50 + Math.random() * 180;
+      line.dataset.dx = len(Math.cos(angP) * distP);
+      line.dataset.dy = len(Math.sin(angP) * distP);
       line.dataset.rot = len((Math.random() - 0.5) * 120);
       shardGroup.appendChild(line);
       shards.push(line);
@@ -78,7 +78,7 @@
         fl.setAttribute("x1", len(x1)); fl.setAttribute("y1", len(y1));
         fl.setAttribute("x2", len(x2)); fl.setAttribute("y2", len(y2));
         var ang = Math.random() * Math.PI * 2;
-        var dist = 30 + Math.random() * 130;                 // 只在文字附近小幅飘散
+        var dist = 16 + Math.random() * 54;                  // 紧贴文字小幅飘散
         fl.dataset.dx = len(Math.cos(ang) * dist);
         fl.dataset.dy = len(Math.sin(ang) * dist);
         fl.dataset.rot = len((Math.random() - 0.5) * 50);
@@ -312,6 +312,7 @@
       var back = 1 - assemble;
       el.style.transform = "translate(" + (el.dataset.dx * back) + "px," +
         (el.dataset.dy * back) + "px) rotate(" + (el.dataset.rot * back) + "deg)";
+      el.style.opacity = (0.22 + 0.78 * assemble).toFixed(3);   // 归位才亮，散着时很淡
     }
 
     /* --- 肖像描边 + 镜头穿过 --- */
@@ -427,6 +428,7 @@
       var bk = 1 - fConverge;
       fs2.style.transform = "translate(" + (fs2.dataset.dx * bk) + "px," +
         (fs2.dataset.dy * bk) + "px) rotate(" + (fs2.dataset.rot * bk) + "deg)";
+      fs2.style.opacity = (0.18 + 0.82 * fConverge).toFixed(3);  // 越贴近笔画越实
     }
     var thanksDraw = smooth(range(p, 15.70, 16.26));   // 笔画逐段写出
     var thanksFill = smooth(range(p, 16.06, 16.40));   // 墨迹填充跟上
