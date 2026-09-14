@@ -95,8 +95,6 @@ body{
 
 /* 碎裂笔画必须可见（修正 .art line 的 opacity:0 覆盖） */
 #shards line{opacity:1}
-#finalShards line{opacity:1}
-#finalGroup,#finalGroup g{opacity:1}
 #duel,#duel g{opacity:1}
 #grab,#grab g{opacity:1}
 #doveBig,#doveBig g{opacity:1}
@@ -108,7 +106,6 @@ body{
 .char{display:inline-block;will-change:transform,opacity}
 
 /* 最终致谢：笔画聚拢后由左向右显出 */
-#finalShards line{stroke:var(--art);stroke-width:2.2;stroke-linecap:round}
 #finalThanksShapes path,#finalNamesShapes path{
   fill:#f5f3ee;fill-opacity:0;
   stroke:#f5f3ee;stroke-linecap:round;stroke-linejoin:round;
@@ -243,3 +240,8 @@ body{
 
 /* 第三屏：脚注下移，给下方横向墨线与钢笔留出空间 */
 .scene-line .foot{margin-top:4.4em}
+
+/* 第13屏（致谢）：与全站统一字体 */
+.scene-thanks{align-items:center;justify-content:center;text-align:center}
+.scene-thanks .thanks-line{font-size:3.1em;font-weight:700;letter-spacing:.08em;color:#f5f3ee;line-height:1.2}
+.scene-thanks .names-line{font-size:1.35em;letter-spacing:.3em;color:#d6be8a;margin-top:1.2em}
