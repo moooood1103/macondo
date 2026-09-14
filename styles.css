@@ -98,6 +98,8 @@ body{
 #finalShards line{opacity:1}
 #finalGroup,#finalGroup g{opacity:1}
 #duel,#duel g{opacity:1}
+#grab,#grab g{opacity:1}
+#grab path{fill:none;stroke:var(--art);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
 #duel path{fill:none;stroke:var(--art);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
 
 /* 单字碎裂（封面 / 结语） */
