@@ -56,37 +56,6 @@
   /* ============================================================
      2. 最终致谢的笔画：散落 → 聚拢成“谢谢 欢迎交流 / 名字”
      ============================================================ */
-  var finalShardGroup = document.getElementById("finalShards");
-  var finalShards = [];
-  function buildFinalShards() {
-    finalShardGroup.innerHTML = "";
-    finalShards = [];
-    var all = thanksPaths.concat(namesPaths);
-    for (var pi = 0; pi < all.length; pi++) {
-      var path = all[pi];
-      var tx = parseFloat(path.dataset.tx), ty = parseFloat(path.dataset.ty), sc = parseFloat(path.dataset.s);
-      var total = path.getTotalLength ? path.getTotalLength() : 0;
-      if (!total) continue;
-      var count = Math.max(5, Math.round(total * sc / 13));   // 每 13 个单位一个碎笔
-      for (var i = 0; i < count; i++) {
-        var t = (i + 0.5) / count;
-        var q1 = path.getPointAtLength(t * total);
-        var q2 = path.getPointAtLength(Math.min(total, t * total + 24));
-        var x1 = tx + sc * q1.x, y1 = ty - sc * q1.y;
-        var x2 = tx + sc * q2.x, y2 = ty - sc * q2.y;
-        var fl = document.createElementNS(SVGNS, "line");
-        fl.setAttribute("x1", len(x1)); fl.setAttribute("y1", len(y1));
-        fl.setAttribute("x2", len(x2)); fl.setAttribute("y2", len(y2));
-        var ang = Math.random() * Math.PI * 2;
-        var dist = 16 + Math.random() * 54;                  // 紧贴文字小幅飘散
-        fl.dataset.dx = len(Math.cos(ang) * dist);
-        fl.dataset.dy = len(Math.sin(ang) * dist);
-        fl.dataset.rot = len((Math.random() - 0.5) * 50);
-        finalShardGroup.appendChild(fl);
-        finalShards.push(fl);
-      }
-    }
-  }
 
   /* ============================================================
      3. 线稿准备（描边生长）
@@ -125,8 +94,7 @@
     duel: document.getElementById("duel"),
     grab: grabEl,
     doveBig: doveBigEl,
-    doves: document.getElementById("doves"),
-    finalShards: finalShardGroup
+    doves: document.getElementById("doves")
   };
   var doveEls = [].slice.call(document.querySelectorAll(".dove"));
 
@@ -175,9 +143,7 @@
   }
 
   var coverScene = document.querySelector(".scene-cover");
-  var endScene = document.querySelector(".scene-end");
   var coverChars = coverScene ? splitChars(coverScene) : [];
-  var endChars = endScene ? splitChars(endScene) : [];
 
   /* ============================================================
      5. 场景缓存
@@ -217,10 +183,6 @@
      6. 渲染
      ============================================================ */
   var maxScroll = 1;
-  var thanksPaths = [].slice.call(document.querySelectorAll("#finalThanksShapes path"));
-  var namesPaths = [].slice.call(document.querySelectorAll("#finalNamesShapes path"));
-  var thanksLens = thanksPaths.map(prepStroke);
-  var namesLens = namesPaths.map(prepStroke);
   var lineGeom = null;
   var lineSteps = [];
   function measureLine() {
@@ -415,34 +377,7 @@
       de.style.opacity = (doveIn * (1 - doveOut * 0.9) * (0.55 + 0.45 * Math.abs(Math.sin(d + 0.7)))).toFixed(3);
     }
 
-    /* --- 收尾：上一页文字碎裂 → 笔画聚拢成致谢 --- */
-    var endT = smooth(range(p, 15.18, 15.66));
-    applyShatter(endChars, endT);
 
-    var fIn = smooth(range(p, 15.34, 15.54));
-    var fConverge = smooth(range(p, 15.44, 15.98));
-    var fOut = smooth(range(p, 15.90, 16.18));
-    art.finalShards.style.opacity = (0.45 * fIn * (1 - fOut)).toFixed(3);
-    for (var q = 0; q < finalShards.length; q++) {
-      var fs2 = finalShards[q];
-      var bk = 1 - fConverge;
-      fs2.style.transform = "translate(" + (fs2.dataset.dx * bk) + "px," +
-        (fs2.dataset.dy * bk) + "px) rotate(" + (fs2.dataset.rot * bk) + "deg)";
-      fs2.style.opacity = (0.18 + 0.82 * fConverge).toFixed(3);  // 越贴近笔画越实
-    }
-    var thanksDraw = smooth(range(p, 15.70, 16.26));   // 笔画逐段写出
-    var thanksFill = smooth(range(p, 16.06, 16.40));   // 墨迹填充跟上
-    var namesDraw = smooth(range(p, 16.06, 16.50));
-    var namesFill = smooth(range(p, 16.32, 16.60));
-    var ti;
-    for (ti = 0; ti < thanksPaths.length; ti++) {
-      thanksPaths[ti].style.strokeDashoffset = (thanksLens[ti] * (1 - thanksDraw)).toFixed(1);
-      thanksPaths[ti].style.fillOpacity = thanksFill.toFixed(3);
-    }
-    for (ti = 0; ti < namesPaths.length; ti++) {
-      namesPaths[ti].style.strokeDashoffset = (namesLens[ti] * (1 - namesDraw)).toFixed(1);
-      namesPaths[ti].style.fillOpacity = namesFill.toFixed(3);
-    }
 
     /* --- 进度与提示 --- */
     progressBar.style.width = (p / ACTS * 100).toFixed(2) + "%";
@@ -503,7 +438,6 @@
     });
   }
 
-  buildFinalShards();
   measure();
   render();
   window.addEventListener("load", function () { measure(); render(); });
