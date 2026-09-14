@@ -58,14 +58,14 @@
      ============================================================ */
   var finalShardGroup = document.getElementById("finalShards");
   var finalShards = [];
-  for (var fi = 0; fi < 84; fi++) {
+  for (var fi = 0; fi < 130; fi++) {
     var tx = 430 + Math.random() * 740;      // 目标落在致谢文字区域内
     var ty = 340 + Math.random() * 220;
     var fl = document.createElementNS(SVGNS, "line");
     fl.setAttribute("x1", len(tx));
     fl.setAttribute("y1", len(ty));
-    fl.setAttribute("x2", len(tx + (Math.random() - 0.5) * 52));
-    fl.setAttribute("y2", len(ty + (Math.random() - 0.5) * 52));
+    fl.setAttribute("x2", len(tx + (Math.random() - 0.5) * 30));
+    fl.setAttribute("y2", len(ty + (Math.random() - 0.5) * 30));
     fl.dataset.dx = len((Math.random() - 0.5) * 1500);
     fl.dataset.dy = len((Math.random() - 0.5) * 900);
     fl.dataset.rot = len((Math.random() - 0.5) * 150);
@@ -202,6 +202,21 @@
      6. 渲染
      ============================================================ */
   var maxScroll = 1;
+  var thanksEl = document.getElementById("finalThanks");
+  var namesEl = document.getElementById("finalNames");
+  var thanksLen = 12000, namesLen = 6000;
+  function measureFinalText() {
+    if (thanksEl && thanksEl.getComputedTextLength) {
+      thanksLen = Math.max(2000, thanksEl.getComputedTextLength() * 20);
+      thanksEl.style.strokeDasharray = thanksLen;
+      thanksEl.style.strokeDashoffset = thanksLen;
+    }
+    if (namesEl && namesEl.getComputedTextLength) {
+      namesLen = Math.max(1200, namesEl.getComputedTextLength() * 20);
+      namesEl.style.strokeDasharray = namesLen;
+      namesEl.style.strokeDashoffset = namesLen;
+    }
+  }
   var lineGeom = null;
   var lineSteps = [];
   function measureLine() {
@@ -229,6 +244,7 @@
   function measure() {
     maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     measureLine();
+    measureFinalText();
   }
 
   function render() {
@@ -396,25 +412,31 @@
     }
 
     /* --- 收尾：上一页文字碎裂 → 笔画聚拢成致谢 --- */
-    var endT = smooth(range(p, 15.23, 15.79));
+    var endT = smooth(range(p, 15.18, 15.66));
     applyShatter(endChars, endT);
 
-    var fIn = smooth(range(p, 15.47, 15.71));
-    var fConverge = smooth(range(p, 15.59, 16.23));
-    var fOut = smooth(range(p, 16.21, 16.57));
-    art.finalShards.style.opacity = (fIn * (1 - fOut)).toFixed(3);
+    var fIn = smooth(range(p, 15.38, 15.58));
+    var fConverge = smooth(range(p, 15.48, 16.02));
+    var fOut = smooth(range(p, 15.98, 16.26));
+    art.finalShards.style.opacity = (0.5 * fIn * (1 - fOut)).toFixed(3);
     for (var q = 0; q < finalShards.length; q++) {
       var fs2 = finalShards[q];
       var bk = 1 - fConverge;
       fs2.style.transform = "translate(" + (fs2.dataset.dx * bk) + "px," +
         (fs2.dataset.dy * bk) + "px) rotate(" + (fs2.dataset.rot * bk) + "deg)";
     }
-    var thanksT = smooth(range(p, 15.79, 16.27));
-    var namesT = smooth(range(p, 16.13, 16.57));
-    var ct = document.getElementById("clipThanksRect");
-    var cn = document.getElementById("clipNamesRect");
-    if (ct) ct.setAttribute("width", (thanksT * 820).toFixed(1));
-    if (cn) cn.setAttribute("width", (namesT * 560).toFixed(1));
+    var thanksDraw = smooth(range(p, 15.80, 16.30));   // 描边逐笔写出
+    var thanksFill = smooth(range(p, 16.12, 16.44));   // 墨迹填充跟上
+    var namesDraw = smooth(range(p, 16.10, 16.52));
+    var namesFill = smooth(range(p, 16.36, 16.62));
+    if (thanksEl) {
+      thanksEl.style.strokeDashoffset = (thanksLen * (1 - thanksDraw)).toFixed(1);
+      thanksEl.style.fillOpacity = thanksFill.toFixed(3);
+    }
+    if (namesEl) {
+      namesEl.style.strokeDashoffset = (namesLen * (1 - namesDraw)).toFixed(1);
+      namesEl.style.fillOpacity = namesFill.toFixed(3);
+    }
 
     /* --- 进度与提示 --- */
     progressBar.style.width = (p / ACTS * 100).toFixed(2) + "%";
