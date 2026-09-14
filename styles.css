@@ -156,7 +156,7 @@ body{
 .theme-light .points b{color:var(--ink)}
 .theme-dark .points b{color:#f5f3ee}
 .quote{font-size:1em;line-height:1.8;max-width:42em;margin-top:.4em}
-.quote i{font-style:normal;font-size:.82em;letter-spacing:.16em;color:var(--accent);margin-right:.7em}
+.quote i{font-style:normal;font-size:.9em;letter-spacing:.16em;color:var(--accent);margin-right:.7em}
 .theme-dark .quote i{color:#d6be8a}
 .take{font-size:1.22em;font-weight:700;margin-top:1.6em}
 
@@ -187,7 +187,7 @@ body{
   background:var(--bloom);filter:blur(9px);
 }
 .inkcell h3{font-size:1.14em;font-weight:700;position:relative}
-.who{font-size:.86em;letter-spacing:.12em;color:var(--accent);margin:.35em 0 .5em}
+.who{font-size:.92em;letter-spacing:.12em;color:var(--accent);margin:.35em 0 .5em}
 .inkcell p{font-size:1em;line-height:1.65;position:relative}
 
 /* 两条线 */
@@ -216,7 +216,7 @@ body{
 /* 提示与进度 */
 .hint{
   position:absolute;left:50%;bottom:2.1em;transform:translateX(-50%);
-  font-size:.9em;letter-spacing:.24em;color:var(--ink);
+  font-size:.9em;letter-spacing:.24em;color:var(--art);
   opacity:.55;transition:opacity .3s;
 }
 .hint.hide{opacity:0}
@@ -225,7 +225,7 @@ body{
 .fs{
   position:absolute;right:1.6em;top:1.6em;z-index:20;
   width:2.4em;height:2.4em;border:0;border-radius:6px;cursor:pointer;
-  background:rgba(120,120,120,.14);color:inherit;font-size:1em;line-height:1;
+  background:rgba(120,120,120,.14);color:var(--art);font-size:1em;line-height:1;
 }
 .fs:hover{background:rgba(120,120,120,.26)}
 
