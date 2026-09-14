@@ -108,16 +108,13 @@ body{
 .char{display:inline-block;will-change:transform,opacity}
 
 /* 最终致谢：笔画聚拢后由左向右显出 */
-#finalShards line{stroke:var(--art);stroke-width:2.4;stroke-linecap:round}
-#finalGroup text{
-  font-family:"Microsoft YaHei","微软雅黑","PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans CJK SC",sans-serif;
-  font-weight:700;
+#finalShards line{stroke:var(--art);stroke-width:2.2;stroke-linecap:round}
+#finalThanksShapes path,#finalNamesShapes path{
   fill:#f5f3ee;fill-opacity:0;
-  stroke:#f5f3ee;stroke-width:1.7;
-  stroke-linecap:round;stroke-linejoin:round;
+  stroke:#f5f3ee;stroke-linecap:round;stroke-linejoin:round;
 }
-#finalThanks{font-size:96px;letter-spacing:10px}
-#finalNames{font-size:44px;letter-spacing:16px;fill:#d6be8a;stroke:#d6be8a}
+#finalThanksShapes path{stroke-width:18}
+#finalNamesShapes path{stroke-width:30;fill:#d6be8a;stroke:#d6be8a}
 
 /* ---------- 场景 ---------- */
 .scene{
