@@ -14,6 +14,7 @@
   var SHIFT2 = 0.7;                    // 钢笔等第二屏文字完全渐隐之后才出现
   var EXTRA3 = 0.35;                   // 第三屏（主线）多停留一会儿
   var ACTS = 14 + SHIFT + SHIFT2 + EXTRA3;  // 整条滚动时间轴长度
+  var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   var range = function (v, a, b) {
     if (b === a) return v >= b ? 1 : 0;
@@ -261,7 +262,16 @@
 
     /* --- 封面文字：笔画分崩离析 --- */
     var coverT = smooth(range(p, 0.84, 1.30));
-    applyShatter(coverChars, coverT);
+    if (REDUCED) {
+      /* 系统开启"减少动态效果"时：不做碎裂与飞行，只做淡出 */
+      art.shards.style.opacity = "0";
+      for (var rc = 0; rc < coverChars.length; rc++) {
+        coverChars[rc].style.transform = "";
+        coverChars[rc].style.opacity = (1 - coverT).toFixed(3);
+      }
+    } else {
+      applyShatter(coverChars, coverT);
+    }
     coverScene.style.filter = coverT > 0.02 ? "blur(" + (coverT * 3.4).toFixed(2) + "px)" : "none";
 
     /* --- 散落笔画重组成肖像 --- */
