@@ -58,19 +58,34 @@
      ============================================================ */
   var finalShardGroup = document.getElementById("finalShards");
   var finalShards = [];
-  for (var fi = 0; fi < 130; fi++) {
-    var tx = 430 + Math.random() * 740;      // 目标落在致谢文字区域内
-    var ty = 340 + Math.random() * 220;
-    var fl = document.createElementNS(SVGNS, "line");
-    fl.setAttribute("x1", len(tx));
-    fl.setAttribute("y1", len(ty));
-    fl.setAttribute("x2", len(tx + (Math.random() - 0.5) * 30));
-    fl.setAttribute("y2", len(ty + (Math.random() - 0.5) * 30));
-    fl.dataset.dx = len((Math.random() - 0.5) * 1500);
-    fl.dataset.dy = len((Math.random() - 0.5) * 900);
-    fl.dataset.rot = len((Math.random() - 0.5) * 150);
-    finalShardGroup.appendChild(fl);
-    finalShards.push(fl);
+  function buildFinalShards() {
+    finalShardGroup.innerHTML = "";
+    finalShards = [];
+    var all = thanksPaths.concat(namesPaths);
+    for (var pi = 0; pi < all.length; pi++) {
+      var path = all[pi];
+      var tx = parseFloat(path.dataset.tx), ty = parseFloat(path.dataset.ty), sc = parseFloat(path.dataset.s);
+      var total = path.getTotalLength ? path.getTotalLength() : 0;
+      if (!total) continue;
+      var count = Math.max(5, Math.round(total * sc / 13));   // 每 13 个单位一个碎笔
+      for (var i = 0; i < count; i++) {
+        var t = (i + 0.5) / count;
+        var q1 = path.getPointAtLength(t * total);
+        var q2 = path.getPointAtLength(Math.min(total, t * total + 24));
+        var x1 = tx + sc * q1.x, y1 = ty - sc * q1.y;
+        var x2 = tx + sc * q2.x, y2 = ty - sc * q2.y;
+        var fl = document.createElementNS(SVGNS, "line");
+        fl.setAttribute("x1", len(x1)); fl.setAttribute("y1", len(y1));
+        fl.setAttribute("x2", len(x2)); fl.setAttribute("y2", len(y2));
+        var ang = Math.random() * Math.PI * 2;
+        var dist = 30 + Math.random() * 130;                 // 只在文字附近小幅飘散
+        fl.dataset.dx = len(Math.cos(ang) * dist);
+        fl.dataset.dy = len(Math.sin(ang) * dist);
+        fl.dataset.rot = len((Math.random() - 0.5) * 50);
+        finalShardGroup.appendChild(fl);
+        finalShards.push(fl);
+      }
+    }
   }
 
   /* ============================================================
@@ -202,21 +217,10 @@
      6. 渲染
      ============================================================ */
   var maxScroll = 1;
-  var thanksEl = document.getElementById("finalThanks");
-  var namesEl = document.getElementById("finalNames");
-  var thanksLen = 12000, namesLen = 6000;
-  function measureFinalText() {
-    if (thanksEl && thanksEl.getComputedTextLength) {
-      thanksLen = Math.max(2000, thanksEl.getComputedTextLength() * 20);
-      thanksEl.style.strokeDasharray = thanksLen;
-      thanksEl.style.strokeDashoffset = thanksLen;
-    }
-    if (namesEl && namesEl.getComputedTextLength) {
-      namesLen = Math.max(1200, namesEl.getComputedTextLength() * 20);
-      namesEl.style.strokeDasharray = namesLen;
-      namesEl.style.strokeDashoffset = namesLen;
-    }
-  }
+  var thanksPaths = [].slice.call(document.querySelectorAll("#finalThanksShapes path"));
+  var namesPaths = [].slice.call(document.querySelectorAll("#finalNamesShapes path"));
+  var thanksLens = thanksPaths.map(prepStroke);
+  var namesLens = namesPaths.map(prepStroke);
   var lineGeom = null;
   var lineSteps = [];
   function measureLine() {
@@ -244,7 +248,6 @@
   function measure() {
     maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     measureLine();
-    measureFinalText();
   }
 
   function render() {
@@ -415,27 +418,28 @@
     var endT = smooth(range(p, 15.18, 15.66));
     applyShatter(endChars, endT);
 
-    var fIn = smooth(range(p, 15.38, 15.58));
-    var fConverge = smooth(range(p, 15.48, 16.02));
-    var fOut = smooth(range(p, 15.98, 16.26));
-    art.finalShards.style.opacity = (0.5 * fIn * (1 - fOut)).toFixed(3);
+    var fIn = smooth(range(p, 15.34, 15.54));
+    var fConverge = smooth(range(p, 15.44, 15.98));
+    var fOut = smooth(range(p, 15.90, 16.18));
+    art.finalShards.style.opacity = (0.45 * fIn * (1 - fOut)).toFixed(3);
     for (var q = 0; q < finalShards.length; q++) {
       var fs2 = finalShards[q];
       var bk = 1 - fConverge;
       fs2.style.transform = "translate(" + (fs2.dataset.dx * bk) + "px," +
         (fs2.dataset.dy * bk) + "px) rotate(" + (fs2.dataset.rot * bk) + "deg)";
     }
-    var thanksDraw = smooth(range(p, 15.80, 16.30));   // 描边逐笔写出
-    var thanksFill = smooth(range(p, 16.12, 16.44));   // 墨迹填充跟上
-    var namesDraw = smooth(range(p, 16.10, 16.52));
-    var namesFill = smooth(range(p, 16.36, 16.62));
-    if (thanksEl) {
-      thanksEl.style.strokeDashoffset = (thanksLen * (1 - thanksDraw)).toFixed(1);
-      thanksEl.style.fillOpacity = thanksFill.toFixed(3);
+    var thanksDraw = smooth(range(p, 15.70, 16.26));   // 笔画逐段写出
+    var thanksFill = smooth(range(p, 16.06, 16.40));   // 墨迹填充跟上
+    var namesDraw = smooth(range(p, 16.06, 16.50));
+    var namesFill = smooth(range(p, 16.32, 16.60));
+    var ti;
+    for (ti = 0; ti < thanksPaths.length; ti++) {
+      thanksPaths[ti].style.strokeDashoffset = (thanksLens[ti] * (1 - thanksDraw)).toFixed(1);
+      thanksPaths[ti].style.fillOpacity = thanksFill.toFixed(3);
     }
-    if (namesEl) {
-      namesEl.style.strokeDashoffset = (namesLen * (1 - namesDraw)).toFixed(1);
-      namesEl.style.fillOpacity = namesFill.toFixed(3);
+    for (ti = 0; ti < namesPaths.length; ti++) {
+      namesPaths[ti].style.strokeDashoffset = (namesLens[ti] * (1 - namesDraw)).toFixed(1);
+      namesPaths[ti].style.fillOpacity = namesFill.toFixed(3);
     }
 
     /* --- 进度与提示 --- */
@@ -497,6 +501,7 @@
     });
   }
 
+  buildFinalShards();
   measure();
   render();
   window.addEventListener("load", function () { measure(); render(); });
