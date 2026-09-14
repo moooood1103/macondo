@@ -87,8 +87,6 @@
   var penLens = penPaths.map(prepStroke);
   var pencilPaths = [].slice.call(document.querySelectorAll("#pencil path"));
   var pencilLens = pencilPaths.map(prepStroke);
-  var linePaths = [].slice.call(document.querySelectorAll("#lines path"));
-  var lineLens = linePaths.map(prepStroke);
   var inkLine = document.getElementById("inkLine");
   var inkLen = prepStroke(inkLine);
   var duelPaths = [].slice.call(document.querySelectorAll("#duel path"));
@@ -113,7 +111,6 @@
     grab: grabEl,
     doveBig: doveBigEl,
     doves: document.getElementById("doves"),
-    lines: document.getElementById("lines"),
     finalShards: finalShardGroup
   };
   var doveEls = [].slice.call(document.querySelectorAll(".dove"));
@@ -397,14 +394,6 @@
       de.setAttribute("transform", "translate(" + dx.toFixed(1) + "," + dy.toFixed(1) + ") scale(" + (0.85 + (d % 3) * 0.22).toFixed(2) + ")");
       de.style.opacity = (doveIn * (1 - doveOut * 0.9) * (0.55 + 0.45 * Math.abs(Math.sin(d + 0.7)))).toFixed(3);
     }
-
-    /* --- 两条线（第九页） --- */
-    var lineT = smooth(range(p, 11.80, 12.60));
-    for (var e2 = 0; e2 < linePaths.length; e2++) {
-      linePaths[e2].style.strokeDashoffset = (lineLens[e2] * (1 - lineT)).toFixed(1);
-    }
-    art.lines.style.opacity = (lineT * (1 - smooth(range(p, 12.80, 13.35)))).toFixed(3);
-    art.lines.style.transform = "translateY(" + (-smooth(range(p, 12.75, 13.45)) * 80).toFixed(1) + "px)";
 
     /* --- 收尾：上一页文字碎裂 → 笔画聚拢成致谢 --- */
     var endT = smooth(range(p, 15.23, 15.79));
