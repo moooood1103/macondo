@@ -95,6 +95,9 @@
   var duelLens = duelPaths.map(prepStroke);
   var duelL = document.getElementById("duelL");
   var duelR = document.getElementById("duelR");
+  var grabPaths = [].slice.call(document.querySelectorAll("#grab path"));
+  var grabLens = grabPaths.map(prepStroke);
+  var grabEl = document.getElementById("grab");
 
   var art = {
     bloom: document.getElementById("bloom"),
@@ -104,6 +107,7 @@
     inkLine: inkLine,
     pencil: document.getElementById("pencil"),
     duel: document.getElementById("duel"),
+    grab: grabEl,
     doves: document.getElementById("doves"),
     lines: document.getElementById("lines"),
     finalShards: finalShardGroup
@@ -349,6 +353,19 @@
     var duelDrift = smooth(range(p, 8.90, 9.55)) * 100;  // 起点间距 70 → 终点深度重合 130（与放大量一致）
     if (duelL) duelL.setAttribute("transform", "translate(" + (879 + duelDrift).toFixed(1) + ",107) scale(1.5)");
     if (duelR) duelR.setAttribute("transform", "translate(" + (1585 - duelDrift).toFixed(1) + ",105) scale(-1.5,1.5)");
+
+    /* --- 细节三：握拳抓钞票（同套极简线稿，右侧，让开文字） --- */
+    var grabOp = 0.55 * smooth(range(p, 9.50, 9.72)) * (1 - smooth(range(p, 10.45, 10.71)));
+    if (art.grab) art.grab.style.opacity = grabOp.toFixed(3);
+    for (var g = 0; g < grabPaths.length; g++) {
+      var gb = 9.55 + g * 0.05;
+      var gt = smooth(range(p, gb, gb + 0.42));
+      grabPaths[g].style.strokeDashoffset = (grabLens[g] * (1 - gt)).toFixed(1);
+    }
+    if (grabEl) {
+      var grabRise = smooth(range(p, 9.55, 10.35)) * 10;   // 轻轻向上一提，像"抓起来"
+      grabEl.setAttribute("transform", "translate(1070," + (293 - grabRise).toFixed(1) + ") scale(1.5)");
+    }
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
     var doveIn = smooth(range(p, 10.70, 11.30));
