@@ -381,7 +381,7 @@
     }
     if (doveBigEl) {
       var doveRise2 = smooth(range(p, 10.60, 11.40)) * 12;   // 轻轻上浮，像要起飞
-      doveBigEl.setAttribute("transform", "translate(894," + (223 - doveRise2).toFixed(1) + ") scale(1.6)");
+      doveBigEl.setAttribute("transform", "translate(894," + (293 - doveRise2).toFixed(1) + ") scale(1.6)");
     }
 
     /* --- 鸽子：第八页出现，第九页飞走 --- */
